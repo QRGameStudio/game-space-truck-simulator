@@ -10,20 +10,17 @@ html {
     align-items: flex-start;
 }
 
-body {
+body, #game-layer {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
-#game-layer {
-    overflow: scroll;
+#game-canvas {
     width: 100%;
     height: 100%;
-}
-
-#game-content {
-    display: inline-grid;
-    grid-gap: 0;
+    margin: 0;
+    padding: 0;
 }
