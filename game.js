@@ -61,6 +61,30 @@ function createPlayer(game) {
 
 /**
  * @param game {GEG}
+ * @param player {GEO}
+ * @param isLeft {boolean}
+ */
+function createLaser(game, player, isLeft) {
+    const obj = game.createObject(player.wh, player.hh * 2/3 * (isLeft ? -1 : 1), 0, player);
+    obj.h = 3;
+    obj.w = player.wh * 2/3;
+    obj.s = 7;
+    /**
+     * @param ctx {CanvasRenderingContext2D}
+     */
+    obj.draw = (ctx) => {
+        ctx.strokeStyle = 'aqua';
+        ctx.lineWidth = obj.h;
+        ctx.moveTo(obj.x - obj.wh, obj.y);
+        ctx.lineTo(obj.x + obj.wh, obj.y);
+        ctx.stroke();
+    }
+
+    obj.onscreenleft = () => obj.die();
+}
+
+/**
+ * @param game {GEG}
  */
 function createAsteroid(game) {
     const sides = 8;
@@ -85,8 +109,6 @@ function createAsteroid(game) {
      * @param ctx {CanvasRenderingContext2D}
      */
     obj.draw = (ctx) => {
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 2;
         ctx.beginPath();
         for (let i = 0; i < sides; i++) {
             const sideX = obj.x - obj.wh * cos(gonioCoefficient * i);
@@ -98,6 +120,8 @@ function createAsteroid(game) {
             }
         }
         ctx.closePath();
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 2;
         ctx.stroke();
     }
 }
@@ -126,10 +150,17 @@ function gameEntryPoint() {
      */
     const canvas = document.getElementById('game-canvas');
     const game = new GEG(canvas);
-    createPlayer(game);
+    const player = createPlayer(game);
 
     for (let i = 0; i < 10; i++) {
         createAsteroid(game);
+    }
+
+    game.onKeyDown = (key) => {
+        if (key === " ") {
+            createLaser(game, player, true);
+            createLaser(game, player, false);
+        }
     }
 
     game.run();
