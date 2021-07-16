@@ -1,4 +1,8 @@
 const { random, sin, cos, PI } = Math;
+/**
+ * @type {GSongLib}
+ */
+let music;
 
 /**
  * @param game {GEG}
@@ -69,6 +73,7 @@ function createLaser(game, player, isLeft) {
     obj.h = 3;
     obj.w = player.wh * 2/3;
     obj.s = 7;
+    obj.t = 'l';
     /**
      * @param ctx {CanvasRenderingContext2D}
      */
@@ -85,23 +90,42 @@ function createLaser(game, player, isLeft) {
 
 /**
  * @param game {GEG}
+ * @param size {number}
+ * @param x {number | null}
+ * @param y {number | null}
  */
-function createAsteroid(game) {
+function createAsteroid(game, size = 75, x = null, y = null) {
     const sides = 8;
     const gonioCoefficient = 2 * PI / sides;
     let spinSpeed = (random() * 7) - 3.5;
 
     const obj = game.createObject();
-    obj.w = obj.h = 75;
-    obj.x = obj.wh + (random() * (game.w - obj.w));
-    obj.y = obj.hh + (random() * (game.h - obj.h));
+    obj.w = obj.h = size;
+    obj.x = x === null ? obj.wh + (random() * (game.w - obj.w)) : x;
+    obj.y = y === null ? obj.hh + (random() * (game.h - obj.h)) : y;
     obj.s = random() * 3;
     obj.d = random() * 360;
     obj.t = 'a';
+    obj.cwl.add('l');
 
     obj.step = () => {
         obj.ia += spinSpeed;
     }
+
+    /**
+     * @param other {GEO}
+     */
+    obj.oncollision = (other) => {
+        // laser hit
+        // noinspection JSIgnoredPromiseFromCall
+        music.play('hit');
+        if (obj.w >= 30) {
+            createAsteroid(game, obj.wh, obj.x - obj.wh, obj.y);
+            createAsteroid(game, obj.wh, obj.x + obj.wh, obj.y);
+        }
+        obj.die();
+        other.die();
+    };
 
     obj.onscreenleft = () => moveObjectToMirrorSide(obj);
 
@@ -120,10 +144,12 @@ function createAsteroid(game) {
             }
         }
         ctx.closePath();
-        ctx.strokeStyle = 'white';
+        ctx.strokeStyle = 'brown';
         ctx.lineWidth = 2;
         ctx.stroke();
     }
+
+    return obj;
 }
 
 /**
@@ -151,6 +177,8 @@ function gameEntryPoint() {
     const canvas = document.getElementById('game-canvas');
     const game = new GEG(canvas);
     const player = createPlayer(game);
+
+    music = new GSongLib();
 
     for (let i = 0; i < 10; i++) {
         createAsteroid(game);
