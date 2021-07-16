@@ -10,6 +10,7 @@ function createPlayer(game) {
     obj.y = game.h / 4;
     obj.h = 25;
     obj.w = 75;
+    obj.t = 'p';
     obj.step = () => {
         if (game.kp('a')) {
             obj.d -= 5;
@@ -32,11 +33,25 @@ function createPlayer(game) {
         ctx.strokeStyle = 'white';
         ctx.lineWidth = 5;
         ctx.beginPath();
+        // front
         ctx.moveTo(obj.x + obj.wh, obj.y);
+        // bottom right
         ctx.lineTo(obj.x, obj.y + obj.hh);
+        // bottom left
         ctx.lineTo(obj.x, obj.y - obj.hh);
         ctx.closePath();
         ctx.stroke();
+        if (obj.s > 0 && obj.fwd) {
+            ctx.strokeStyle = 'orange';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(obj.x, obj.y + (obj.hh * 2/3));
+            ctx.lineTo(obj.x - (obj.wh * random()), obj.y);
+            ctx.lineTo(obj.x, obj.y - (obj.hh * 2/3));
+            ctx.moveTo(obj.x, obj.y + (obj.hh * 2/3));
+            ctx.closePath();
+            ctx.stroke();
+        }
     }
 
     obj.onscreenleft = () => moveObjectToMirrorSide(obj);
@@ -58,6 +73,7 @@ function createAsteroid(game) {
     obj.y = obj.hh + (random() * (game.h - obj.h));
     obj.s = random() * 3;
     obj.d = random() * 360;
+    obj.t = 'a';
 
     obj.step = () => {
         obj.ia += spinSpeed;
