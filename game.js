@@ -5,6 +5,11 @@ const { random, sin, cos, PI } = Math;
 let music;
 
 /**
+ * @type {function(): void}
+ */
+let startNewRound;
+
+/**
  * @param game {GEG}
  * @return {GEO}
  */
@@ -15,6 +20,7 @@ function createPlayer(game) {
     obj.h = 25;
     obj.w = 75;
     obj.t = 'p';
+    obj.cwl.add('a');
     obj.step = () => {
         if (game.kp('a')) {
             obj.d -= 5;
@@ -56,6 +62,20 @@ function createPlayer(game) {
             ctx.closePath();
             ctx.stroke();
         }
+    }
+
+    obj.oncollision = () => {
+        // asteroid hit
+        game.paused = true;
+        // noinspection JSIgnoredPromiseFromCall
+        music.play('failLong');
+        setTimeout(() => {
+            new GModal().yesNo('Again?').then((yes) => {
+                if (yes) {
+                    startNewRound();
+                }
+            });
+        }, 2000);
     }
 
     obj.onscreenleft = () => moveObjectToMirrorSide(obj);
@@ -101,9 +121,9 @@ function createAsteroid(game, size = 75, x = null, y = null) {
 
     const obj = game.createObject();
     obj.w = obj.h = size;
-    obj.x = x === null ? obj.wh + (random() * (game.w - obj.w)) : x;
-    obj.y = y === null ? obj.hh + (random() * (game.h - obj.h)) : y;
-    obj.s = random() * 3;
+    obj.x = x === null ? game.w - obj.wh + (random() * game.w * 0.05) : x;
+    obj.y = y === null ? game.h - obj.hh + (random() * game.h * 0.05) : y;
+    obj.s = 1 + random() * 2;
     obj.d = random() * 360;
     obj.t = 'a';
     obj.cwl.add('l');
@@ -176,20 +196,34 @@ function gameEntryPoint() {
      */
     const canvas = document.getElementById('game-canvas');
     const game = new GEG(canvas);
-    const player = createPlayer(game);
 
     music = new GSongLib();
 
-    for (let i = 0; i < 10; i++) {
-        createAsteroid(game);
-    }
+    startNewRound = () => {
+        game.paused = true;
+        game.objects.length = 0;
+        game.paused = false;
 
-    game.onKeyDown = (key) => {
-        if (key === " ") {
-            createLaser(game, player, true);
-            createLaser(game, player, false);
+        const player = createPlayer(game);
+
+        for (let i = 0; i < 10; i++) {
+            createAsteroid(game);
         }
-    }
+
+        function autoSpawnAsteroids() {
+            createAsteroid(game);
+            setTimeout(() => autoSpawnAsteroids(), 2500 + (15000 * random()));
+        }
+        autoSpawnAsteroids();
+
+        game.onKeyDown = (key) => {
+            if (key === " ") {
+                createLaser(game, player, true);
+                createLaser(game, player, false);
+            }
+        }
+    };
+    startNewRound();
 
     game.run();
 }
