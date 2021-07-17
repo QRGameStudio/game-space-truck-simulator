@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress HtmlFormInputWithoutLabel -->
 <html lang="en">
 <head>
     <title>Asteroids</title>
@@ -14,6 +15,15 @@
 
 <div id="game-layer">
     <canvas id="game-canvas" width="500" height="500" autofocus></canvas>
+    <div class="controls-c">
+        <div class="controls">
+            <button class="btn" id="fL">!</button>
+            <button class="btn" id="fR">!</button>
+            <button class="btn" id="bL">&lt;</button>
+            <input type="range" min="1" max="100" value="50" id="iS">
+            <button class="btn" id="bR">&gt;</button>
+        </div>
+    </div>
 </div>
 
 </body>

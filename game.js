@@ -1,4 +1,5 @@
 const { random, sin, cos, PI } = Math;
+const $ = document.querySelector.bind(document);
 /**
  * @type {GSongLib}
  */
@@ -20,7 +21,7 @@ function createPlayer(game) {
     obj.h = 25;
     obj.w = 75;
     obj.t = 'p';
-    obj.cwl.add('a');
+    // obj.cwl.add('a');
     obj.step = () => {
         if (game.kp('a')) {
             obj.d -= 5;
@@ -33,7 +34,7 @@ function createPlayer(game) {
         } else if (game.kp('s')) {
             obj.s = -3;
         } else {
-            obj.s = 0;
+            obj.s = getSliderSpeed();
         }
     };
     /**
@@ -189,22 +190,45 @@ function moveObjectToMirrorSide(obj) {
     }
 }
 
+/**
+ * @return {number}
+ */
+function getSliderSpeed() {
+    const val = $('#iS').value;
+    if (val > 60) {
+        return (val - 50) / 50 * 5;
+    } else if (val < 40) {
+        return (50 - val) / 50 * -3;
+    }
+    return 0;
+}
+
 function gameEntryPoint() {
     // noinspection JSValidateTypes
     /**
      * @type {HTMLCanvasElement}
      */
-    const canvas = document.getElementById('game-canvas');
+    const canvas = $('#game-canvas');
     const game = new GEG(canvas);
 
     music = new GSongLib();
 
     startNewRound = () => {
+        game.res = {w: 1920, h: 1080};
         game.paused = true;
         game.objects.length = 0;
         game.paused = false;
 
         const player = createPlayer(game);
+
+        $('#fR').ontouchstart = () => createLaser(game, player, false);
+        $('#fL').ontouchstart = () => createLaser(game, player, true);
+        const bR = $('#bR');
+        const bL = $('#bL');
+        bR.ontouchstart = () => game.press('d');
+        bR.ontouchend = () => game.release('d');
+        bL.ontouchstart = () => game.press('a');
+        bL.ontouchend = () => game.release('a');
 
         for (let i = 0; i < 10; i++) {
             createAsteroid(game);

@@ -24,3 +24,55 @@ body, #game-layer {
     margin: 0;
     padding: 0;
 }
+
+@media only screen and (min-device-width: 768px) {
+    .controls-c {
+        display: none !important;
+    }
+}
+
+.controls-c {
+    position: fixed;
+    bottom: 1em;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.controls {
+    width: 100%;
+    max-width: 15cm;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: min-content 1fr min-content;
+    justify-items: center;
+}
+
+.btn {
+    background: lightgray !important;
+    color: white;
+    width: 2cm;
+    height: 2cm;
+}
+
+#fR {
+    grid-area: 1/3;
+}
+
+#fL {
+    grid-area: 1/1;
+}
+
+#bR {
+    grid-area: 2/3;
+}
+
+#iS {
+    grid-area: 2/2;
+    width: 100%;
+    height: 2cm;
+}
+
+#bL {
+    grid-area: 2/1;
+}
