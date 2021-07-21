@@ -32,6 +32,7 @@ body, #game-layer {
 }
 
 .controls-c {
+    opacity: 0.5;
     position: fixed;
     bottom: 1em;
     width: 100%;
@@ -75,4 +76,9 @@ body, #game-layer {
 
 #bL {
     grid-area: 2/1;
+}
+
+#game-score {
+    color: white;
+    font-size: 25px;
 }

@@ -4,6 +4,10 @@ const $ = document.querySelector.bind(document);
  * @type {GSongLib}
  */
 let music;
+/**
+ * @type {GScore}
+ */
+let score;
 
 /**
  * @type {function(): void}
@@ -53,7 +57,7 @@ function createPlayer(game) {
         ctx.closePath();
         ctx.stroke();
         if (obj.s > 0 && obj.fwd) {
-            ctx.strokeStyle = 'orange';
+            ctx.strokeStyle = 'yellow';
             ctx.lineWidth = 5;
             ctx.beginPath();
             ctx.moveTo(obj.x, obj.y + (obj.hh * 2/3));
@@ -101,8 +105,10 @@ function createLaser(game, player, isLeft) {
     obj.draw = (ctx) => {
         ctx.strokeStyle = 'aqua';
         ctx.lineWidth = obj.h;
+        ctx.beginPath();
         ctx.moveTo(obj.x - obj.wh, obj.y);
         ctx.lineTo(obj.x + obj.wh, obj.y);
+        ctx.closePath();
         ctx.stroke();
     }
 
@@ -140,6 +146,8 @@ function createAsteroid(game, size = 75, x = null, y = null) {
         // laser hit
         // noinspection JSIgnoredPromiseFromCall
         music.play('hit');
+        // noinspection JSIgnoredPromiseFromCall
+        score.inc(1);
         if (obj.w >= 30) {
             createAsteroid(game, obj.wh, obj.x - obj.wh, obj.y);
             createAsteroid(game, obj.wh, obj.x + obj.wh, obj.y);
@@ -165,8 +173,8 @@ function createAsteroid(game, size = 75, x = null, y = null) {
             }
         }
         ctx.closePath();
-        ctx.strokeStyle = 'brown';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'orange';
+        ctx.lineWidth = 4;
         ctx.stroke();
     }
 
@@ -174,7 +182,7 @@ function createAsteroid(game, size = 75, x = null, y = null) {
 }
 
 /**
- * From up to buttom, from left to right and vice versa
+ * From up to bottom, from left to right and vice versa
  * @param obj {GEO}
  */
 function moveObjectToMirrorSide(obj) {
@@ -212,9 +220,10 @@ function gameEntryPoint() {
     const game = new GEG(canvas);
 
     music = new GSongLib();
+    score = new GScore();
 
     startNewRound = () => {
-        game.res = {w: 1920, h: 1080};
+        game.res = GUt.isLandscape() ? {w: 1920, h: 1080} : {w: 1080, h: 1920};
         game.paused = true;
         game.objects.length = 0;
         game.paused = false;
