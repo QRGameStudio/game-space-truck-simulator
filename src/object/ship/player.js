@@ -45,9 +45,11 @@ class Inventory {
 class GEOPlayer extends GEOShip {
     constructor(game) {
         super(game, 'white');
-        this.x = game.wh;
-        this.y = game.hh;
+        this.x = 0;
+        this.y = 0;
         this.t = 'p';
+
+        this.rendererPosition = new GRenderer($('.position'), {x: 0, y: 0});
     }
 
     step() {
@@ -62,9 +64,13 @@ class GEOPlayer extends GEOShip {
             this.s = 5;
         } else if (this.game.kp('s')) {
             this.s = -3;
-        } else {
+        } else if (!this.__autopilot) {
             this.s = getSliderSpeed();
         }
+
+        this.rendererPosition.variables.x = Math.floor(this.x / 10);
+        this.rendererPosition.variables.y = Math.floor(this.y / 10);
+        this.rendererPosition.render();
     }
 }
 

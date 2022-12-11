@@ -24,11 +24,11 @@ function createIngot(game, x, y) {
         }
     }
 
-    /** @param other {GEO} */
+    /** @param other {GEOPlayer} */
     obj.oncollision = (other) => {
         // player hit
         MUSIC.play('success').then();
-        other.data.get('inventory').add('metal', 1);
+        other.inventory.add('metal', 1);
         inventoryRenderer.render();
         obj.die();
     };

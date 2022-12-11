@@ -48,9 +48,17 @@ function start() {
     GAME.cameraFollowObject = player;
     inventoryRenderer = new GRenderer($('.inventory'), {player});
 
-    const station = new GEOStation(GAME);
-    station.x = player.x - 1.5 * station.w;
-    station.y = player.y;
+    let station = new GEOStation(GAME);
+    station.x = 0;
+    station.y = 0;
+
+    station = new GEOStation(GAME);
+    station.x = -300;
+    station.y = -300;
+
+    station = new GEOStation(GAME);
+    station.x = 300;
+    station.y = 300;
 
     $('#fR').ontouchstart = () => createLaser(GAME, player, false);
     $('#fL').ontouchstart = () => createLaser(GAME, player, true);
@@ -75,6 +83,15 @@ function start() {
         if (key === " ") {
             player.fireLasers();
         }
+    }
+    GAME.onClick = (x, y) => {
+        const pointer = GAME.createObject(x, y);
+        pointer.draw = (ctx) => {
+            ctx.fillStyle = 'pink';
+            ctx.fillRect(pointer.x - 2, pointer.y - 2, 4, 4);
+        }
+        setTimeout(() => pointer.die(), 500);
+        player.goto(x, y);
     }
 
     GAME.run();

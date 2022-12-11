@@ -18,9 +18,15 @@
     <div class="controls-c">
         <div class="inventory">
             <ul>
-                <li>Cargo: <span r-var="v.player.data.get('inventory').sum()"></span> t</li>
-                <li>Health: <span r-var="v.player.data.get('health')"></span></li>
+                <li>Cargo: <span r-var="v.player.inventory.sum()"></span> t</li>
+                <li>Health: <span r-var="v.player.health"></span></li>
             </ul>
+        </div>
+        <div class="position">
+            Position:
+            <span r-var="v.x"></span>
+            X
+            <span r-var="v.y"></span>
         </div>
         <div class="controls">
             <button class="btn" id="fL">!</button>
