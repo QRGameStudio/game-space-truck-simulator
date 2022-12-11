@@ -32,7 +32,7 @@ function createAsteroid(game, size = 75, x = null, y = null) {
             case 'l':
                 // laser hit
                 // noinspection JSIgnoredPromiseFromCall
-                music.play('hit');
+                MUSIC.play('hit');
                 if (obj.w >= 30) {
                     createAsteroid(game, obj.wh, obj.x - obj.wh, obj.y);
                     createAsteroid(game, obj.wh, obj.x + obj.wh, obj.y);
@@ -44,7 +44,7 @@ function createAsteroid(game, size = 75, x = null, y = null) {
                 break;
             case 'p':
                 // player hit
-                music.play('fail').then();
+                MUSIC.play('fail').then();
                 other.data.set('health', Math.floor(other.data.get('health') - size));
                 inventoryRenderer.render();
                 obj.die();
@@ -105,7 +105,7 @@ function createIngot(game, x, y) {
     /** @param other {GEO} */
     obj.oncollision = (other) => {
         // player hit
-        music.play('success').then();
+        MUSIC.play('success').then();
         other.data.get('inventory').add('metal', 1);
         inventoryRenderer.render();
         obj.die();

@@ -41,64 +41,81 @@ class Inventory {
     }
 }
 
-/**
- * @param game {GEG}
- * @return {GEO}
- */
-function createPlayer(game) {
-    const obj = game.createObject();
-    obj.data.set('inventory', new Inventory());
-    obj.data.set('health', 100);
-
-    obj.x = game.w / 4;
-    obj.y = game.h / 4;
-    obj.h = 25;
-    obj.w = 75;
-    obj.t = 'p';
-    obj.step = () => {
-        if (game.kp('a')) {
-            obj.d -= 5;
-        } else if (game.kp('d')) {
-            obj.d += 5;
-        }
-
-        if (game.kp('w')) {
-            obj.s = 5;
-        } else if (game.kp('s')) {
-            obj.s = -3;
-        } else {
-            obj.s = getSliderSpeed();
-        }
-    };
+class GEOShip extends GEO {
     /**
-     * @param ctx {CanvasRenderingContext2D}
+     *
+     * @param game {GEG}
+     * @param color {string}
      */
-    obj.draw = (ctx) => {
-        ctx.strokeStyle = 'white';
+    constructor(game, color) {
+        super(game);
+        this.w = 75;
+        this.h = 25;
+        this.t = 'ship';
+
+        /**
+         * @type {Inventory}
+         */
+        this.inventory = new Inventory();
+        /**
+         *
+         * @type {number}
+         */
+        this.health = 100;
+        this.__color = color;
+    }
+
+    draw(ctx) {
+        ctx.strokeStyle = this.__color;
         ctx.lineWidth = 5;
         ctx.beginPath();
         // front
-        ctx.moveTo(obj.x + obj.wh, obj.y);
+        ctx.moveTo(this.x + this.wh, this.y);
         // bottom right
-        ctx.lineTo(obj.x, obj.y + obj.hh);
+        ctx.lineTo(this.x, this.y + this.hh);
         // bottom left
-        ctx.lineTo(obj.x, obj.y - obj.hh);
+        ctx.lineTo(this.x, this.y - this.hh);
         ctx.closePath();
         ctx.stroke();
-        if (obj.s > 0 && obj.fwd) {
+        if (this.s > 0 && this.fwd) {
             ctx.strokeStyle = 'yellow';
             ctx.lineWidth = 5;
             ctx.beginPath();
-            ctx.moveTo(obj.x, obj.y + (obj.hh * 2/3));
-            ctx.lineTo(obj.x - (obj.wh * random()), obj.y);
-            ctx.lineTo(obj.x, obj.y - (obj.hh * 2/3));
-            ctx.moveTo(obj.x, obj.y + (obj.hh * 2/3));
+            ctx.moveTo(this.x, this.y + (this.hh * 2/3));
+            ctx.lineTo(this.x - (this.wh * random()), this.y);
+            ctx.lineTo(this.x, this.y - (this.hh * 2/3));
+            ctx.moveTo(this.x, this.y + (this.hh * 2/3));
             ctx.closePath();
             ctx.stroke();
         }
     }
+}
 
-    return obj;
+
+class GEOPlayer extends GEOShip {
+    constructor(game) {
+        super(game, 'white');
+        this.x = game.wh;
+        this.y = game.hh;
+        this.t = 'p';
+    }
+
+    step() {
+        super.step();
+        if (this.game.kp('a')) {
+            this.d -= 5;
+        } else if (this.game.kp('d')) {
+            this.d += 5;
+        }
+
+        if (this.game.kp('w')) {
+            this.s = 5;
+        } else if (this.game.kp('s')) {
+            this.s = -3;
+        } else {
+            this.s = getSliderSpeed();
+        }
+    }
 }
 
 /**
@@ -124,7 +141,7 @@ function createLaser(game, player, isLeft) {
         ctx.closePath();
         ctx.stroke();
     }
-    music.play('action').then();
+    MUSIC.play('action').then();
 
     obj.onscreenleft = () => obj.die();
 }

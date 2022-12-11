@@ -1,6 +1,7 @@
 // !G.import('src/player.js')
 // !G.import('src/asteroid.js')
 // !G.import('src/station.js')
+// !G.import('src/player.js')
 
 const { random, sin, cos, PI } = Math;
 const $ = document.querySelector.bind(document);
@@ -8,7 +9,7 @@ const $ = document.querySelector.bind(document);
 /**
  * @type {GSongLib}
  */
-let music;
+const MUSIC = new GSongLib();
 
 /** @type {GRenderer} */
 let inventoryRenderer;
@@ -41,14 +42,12 @@ function start() {
     const canvas = $('#game-canvas');
     GAME = new GEG(canvas);
 
-    music = new GSongLib();
-
     GAME.res = GUt.isLandscape() ? {w: 1920, h: 1080} : {w: 1080, h: 1920};
     GAME.paused = true;
     GAME.objects.length = 0;
     GAME.paused = false;
 
-    player = createPlayer(GAME);
+    player = new GEOPlayer(GAME);
     GAME.cameraFollowObject = player;
     inventoryRenderer = new GRenderer($('.inventory'), {player});
 
