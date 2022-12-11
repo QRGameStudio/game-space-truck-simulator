@@ -1,5 +1,6 @@
-/** !G.import('src/player.js') */
-/** !G.import('src/asteroid.js') */
+// !G.import('src/player.js')
+// !G.import('src/asteroid.js')
+// !G.import('src/station.js')
 
 const { random, sin, cos, PI } = Math;
 const $ = document.querySelector.bind(document);
@@ -15,6 +16,10 @@ let inventoryRenderer;
 /** @type {GEO} */
 let player;
 
+/** @type {GEG} */
+let GAME;
+
+
 /**
  * @return {number}
  */
@@ -28,52 +33,56 @@ function getSliderSpeed() {
     return 0;
 }
 
-function gameEntryPoint() {
+function start() {
     // noinspection JSValidateTypes
     /**
      * @type {HTMLCanvasElement}
      */
     const canvas = $('#game-canvas');
-    const game = new GEG(canvas);
+    GAME = new GEG(canvas);
 
     music = new GSongLib();
 
-    game.res = GUt.isLandscape() ? {w: 1920, h: 1080} : {w: 1080, h: 1920};
-    game.paused = true;
-    game.objects.length = 0;
-    game.paused = false;
+    GAME.res = GUt.isLandscape() ? {w: 1920, h: 1080} : {w: 1080, h: 1920};
+    GAME.paused = true;
+    GAME.objects.length = 0;
+    GAME.paused = false;
 
-    player = createPlayer(game);
-    game.cameraFollowObject = player;
+    player = createPlayer(GAME);
+    GAME.cameraFollowObject = player;
     inventoryRenderer = new GRenderer($('.inventory'), {player});
 
-    $('#fR').ontouchstart = () => createLaser(game, player, false);
-    $('#fL').ontouchstart = () => createLaser(game, player, true);
+    const station = new GEOStation(GAME);
+    station.x = player.x - 1.5 * station.w;
+    station.y = player.y;
+
+    $('#fR').ontouchstart = () => createLaser(GAME, player, false);
+    $('#fL').ontouchstart = () => createLaser(GAME, player, true);
     const bR = $('#bR');
     const bL = $('#bL');
-    bR.ontouchstart = () => game.press('d');
-    bR.ontouchend = () => game.release('d');
-    bL.ontouchstart = () => game.press('a');
-    bL.ontouchend = () => game.release('a');
+    bR.ontouchstart = () => GAME.press('d');
+    bR.ontouchend = () => GAME.release('d');
+    bL.ontouchstart = () => GAME.press('a');
+    bL.ontouchend = () => GAME.release('a');
 
     for (let i = 0; i < 10; i++) {
-        createAsteroid(game);
+        createAsteroid(GAME);
     }
 
     function autoSpawnAsteroids() {
-        createAsteroid(game);
+        createAsteroid(GAME);
         setTimeout(() => autoSpawnAsteroids(), 2500 + (15000 * random()));
     }
     autoSpawnAsteroids();
 
-    game.onKeyDown = (key) => {
+    GAME.onKeyDown = (key) => {
         if (key === " ") {
-            createLaser(game, player, true);
-            createLaser(game, player, false);
+            createLaser(GAME, player, true);
+            createLaser(GAME, player, false);
         }
     }
 
-    game.run();
+    GAME.run();
 }
 
-window.onload = gameEntryPoint;
+start();
