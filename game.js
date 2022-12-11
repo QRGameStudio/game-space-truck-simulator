@@ -1,7 +1,4 @@
-// !G.import('src/player.js')
-// !G.import('src/asteroid.js')
-// !G.import('src/station.js')
-// !G.import('src/player.js')
+// !G.import('src/index.js')
 
 const { random, sin, cos, PI } = Math;
 const $ = document.querySelector.bind(document);
@@ -14,7 +11,7 @@ const MUSIC = new GSongLib();
 /** @type {GRenderer} */
 let inventoryRenderer;
 
-/** @type {GEO} */
+/** @type {GEOPlayer} */
 let player;
 
 /** @type {GEG} */
@@ -76,8 +73,7 @@ function start() {
 
     GAME.onKeyDown = (key) => {
         if (key === " ") {
-            createLaser(GAME, player, true);
-            createLaser(GAME, player, false);
+            player.fireLasers();
         }
     }
 
