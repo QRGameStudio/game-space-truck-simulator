@@ -25,12 +25,6 @@ body, #game-layer {
     padding: 0;
 }
 
-@media only screen and (min-device-width: 768px) {
-    .controls-c {
-        display: none !important;
-    }
-}
-
 .controls-c {
     opacity: 0.5;
     position: fixed;
@@ -47,6 +41,10 @@ body, #game-layer {
     grid-gap: 10px;
     grid-template-columns: min-content 1fr min-content;
     justify-items: center;
+}
+
+.inventory {
+    color: white;
 }
 
 .btn {

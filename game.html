@@ -16,6 +16,12 @@
 <div id="game-layer">
     <canvas id="game-canvas" width="500" height="500" autofocus></canvas>
     <div class="controls-c">
+        <div class="inventory">
+            <ul>
+                <li>Cargo: <span r-var="v.player.data.get('inventory').sum()"></span> t</li>
+                <li>Health: <span r-var="v.player.data.get('health')"></span></li>
+            </ul>
+        </div>
         <div class="controls">
             <button class="btn" id="fL">!</button>
             <button class="btn" id="fR">!</button>

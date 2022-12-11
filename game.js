@@ -9,10 +9,54 @@ let music;
  */
 let score;
 
-/**
- * @type {function(): void}
- */
-let startNewRound;
+/** @type {GRenderer} */
+let inventoryRenderer;
+
+/** @type {GEO} */
+let player;
+
+class Inventory {
+    constructor() {
+        /** @type {Map<string, number>} */
+        this.__content = new Map();
+    }
+
+    /**
+     *
+     * @param item {string}
+     * @param count {number}
+     */
+    set(item, count) {
+        this.__content.set(item, count);
+    }
+
+    /**
+     *
+     * @param item {string}
+     * @param count {number}
+     */
+    add(item, count) {
+        this.set(item, this.get(item) + count);
+    }
+
+    /**
+     *
+     * @param item {string}
+     * @return {number}
+     */
+    get(item) {
+        return this.__content.get(item) || 0;
+    }
+
+    // noinspection JSUnusedGlobalSymbols
+    /**
+     *
+     * @return {number}
+     */
+    sum() {
+        return [...this.__content.values()].reduce((a, b) => a + b, 0);
+    }
+}
 
 /**
  * @param game {GEG}
@@ -20,12 +64,14 @@ let startNewRound;
  */
 function createPlayer(game) {
     const obj = game.createObject();
+    obj.data.set('inventory', new Inventory());
+    obj.data.set('health', 100);
+
     obj.x = game.w / 4;
     obj.y = game.h / 4;
     obj.h = 25;
     obj.w = 75;
     obj.t = 'p';
-    // obj.cwl.add('a');
     obj.step = () => {
         if (game.kp('a')) {
             obj.d -= 5;
@@ -69,22 +115,6 @@ function createPlayer(game) {
         }
     }
 
-    obj.oncollision = () => {
-        // asteroid hit
-        game.paused = true;
-        // noinspection JSIgnoredPromiseFromCall
-        music.play('failLong');
-        setTimeout(() => {
-            new GModal().yesNo('Again?').then((yes) => {
-                if (yes) {
-                    startNewRound();
-                }
-            });
-        }, 2000);
-    }
-
-    obj.onscreenleft = () => moveObjectToMirrorSide(obj);
-
     return obj;
 }
 
@@ -111,6 +141,7 @@ function createLaser(game, player, isLeft) {
         ctx.closePath();
         ctx.stroke();
     }
+    music.play('action').then();
 
     obj.onscreenleft = () => obj.die();
 }
@@ -134,29 +165,42 @@ function createAsteroid(game, size = 75, x = null, y = null) {
     obj.d = random() * 360;
     obj.t = 'a';
     obj.cwl.add('l');
+    obj.cwl.add('p');
 
     obj.step = () => {
         obj.ia += spinSpeed;
+        if (obj.distanceFrom(player) > 2 * game.r) {
+            obj.die();
+        }
     }
 
-    /**
-     * @param other {GEO}
-     */
+    /** @param other {GEO} */
     obj.oncollision = (other) => {
-        // laser hit
-        // noinspection JSIgnoredPromiseFromCall
-        music.play('hit');
-        // noinspection JSIgnoredPromiseFromCall
-        score.inc(1);
-        if (obj.w >= 30) {
-            createAsteroid(game, obj.wh, obj.x - obj.wh, obj.y);
-            createAsteroid(game, obj.wh, obj.x + obj.wh, obj.y);
+        switch (other.t) {
+            case 'l':
+                // laser hit
+                // noinspection JSIgnoredPromiseFromCall
+                music.play('hit');
+                // noinspection JSIgnoredPromiseFromCall
+                score.inc(1);
+                if (obj.w >= 30) {
+                    createAsteroid(game, obj.wh, obj.x - obj.wh, obj.y);
+                    createAsteroid(game, obj.wh, obj.x + obj.wh, obj.y);
+                } else {
+                    createIngot(game, obj.cx, obj.cy);
+                }
+                obj.die();
+                other.die();
+                break;
+            case 'p':
+                // player hit
+                music.play('fail').then();
+                other.data.set('health', other.data.get('health') - 15);
+                inventoryRenderer.render();
+                obj.die();
+                break;
         }
-        obj.die();
-        other.die();
     };
-
-    obj.onscreenleft = () => moveObjectToMirrorSide(obj);
 
     /**
      * @param ctx {CanvasRenderingContext2D}
@@ -181,21 +225,51 @@ function createAsteroid(game, size = 75, x = null, y = null) {
     return obj;
 }
 
+
 /**
- * From up to bottom, from left to right and vice versa
- * @param obj {GEO}
+ * @param game {GEG}
+ * @param x {number}
+ * @param y {number}
  */
-function moveObjectToMirrorSide(obj) {
-    if (obj.x < 0) {
-        obj.x = obj.game.w + obj.wh;
-    } else if (obj.x > obj.game.w) {
-        obj.x = -obj.wh;
+function createIngot(game, x, y) {
+    let spinSpeed = (random() * 3) - 1.5;
+
+    const obj = game.createObject();
+    obj.w = 10;
+    obj.h = 20;
+    obj.x = x;
+    obj.y = y;
+    obj.s = 1 + random() * 2;
+    obj.d = random() * 360;
+    obj.t = 'ingot';
+    obj.cwl.add('p');
+
+    obj.step = () => {
+        obj.ia += spinSpeed;
+
+        if (obj.distanceFrom(player) > 2 * game.r) {
+            obj.die();
+        }
     }
-    if (obj.y < 0) {
-        obj.y = obj.game.h + obj.h;
-    } else if (obj.y > obj.game.h) {
-        obj.y = -obj.hh;
+
+    /** @param other {GEO} */
+    obj.oncollision = (other) => {
+        // player hit
+        music.play('success').then();
+        other.data.get('inventory').add('metal', 1);
+        inventoryRenderer.render();
+        obj.die();
+    };
+
+    /**
+     * @param ctx {CanvasRenderingContext2D}
+     */
+    obj.draw = (ctx) => {
+        ctx.fillStyle = 'gray';
+        ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
     }
+
+    return obj;
 }
 
 /**
@@ -222,41 +296,40 @@ function gameEntryPoint() {
     music = new GSongLib();
     score = new GScore();
 
-    startNewRound = () => {
-        game.res = GUt.isLandscape() ? {w: 1920, h: 1080} : {w: 1080, h: 1920};
-        game.paused = true;
-        game.objects.length = 0;
-        game.paused = false;
+    game.res = GUt.isLandscape() ? {w: 1920, h: 1080} : {w: 1080, h: 1920};
+    game.paused = true;
+    game.objects.length = 0;
+    game.paused = false;
 
-        const player = createPlayer(game);
+    player = createPlayer(game);
+    game.cameraFollowObject = player;
+    inventoryRenderer = new GRenderer($('.inventory'), {player});
 
-        $('#fR').ontouchstart = () => createLaser(game, player, false);
-        $('#fL').ontouchstart = () => createLaser(game, player, true);
-        const bR = $('#bR');
-        const bL = $('#bL');
-        bR.ontouchstart = () => game.press('d');
-        bR.ontouchend = () => game.release('d');
-        bL.ontouchstart = () => game.press('a');
-        bL.ontouchend = () => game.release('a');
+    $('#fR').ontouchstart = () => createLaser(game, player, false);
+    $('#fL').ontouchstart = () => createLaser(game, player, true);
+    const bR = $('#bR');
+    const bL = $('#bL');
+    bR.ontouchstart = () => game.press('d');
+    bR.ontouchend = () => game.release('d');
+    bL.ontouchstart = () => game.press('a');
+    bL.ontouchend = () => game.release('a');
 
-        for (let i = 0; i < 10; i++) {
-            createAsteroid(game);
+    for (let i = 0; i < 10; i++) {
+        createAsteroid(game);
+    }
+
+    function autoSpawnAsteroids() {
+        createAsteroid(game);
+        setTimeout(() => autoSpawnAsteroids(), 2500 + (15000 * random()));
+    }
+    autoSpawnAsteroids();
+
+    game.onKeyDown = (key) => {
+        if (key === " ") {
+            createLaser(game, player, true);
+            createLaser(game, player, false);
         }
-
-        function autoSpawnAsteroids() {
-            createAsteroid(game);
-            setTimeout(() => autoSpawnAsteroids(), 2500 + (15000 * random()));
-        }
-        autoSpawnAsteroids();
-
-        game.onKeyDown = (key) => {
-            if (key === " ") {
-                createLaser(game, player, true);
-                createLaser(game, player, false);
-            }
-        }
-    };
-    startNewRound();
+    }
 
     game.run();
 }
