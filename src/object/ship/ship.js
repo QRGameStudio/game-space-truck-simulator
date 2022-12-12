@@ -1,3 +1,13 @@
+/**
+ * @typedef {{
+ *     x: number,
+ *     y: number,
+ *     speed: number,
+ *     acceleration: number,
+ *     accuracy: number
+ * }} GEOShipAutopilot
+ */
+
 class GEOShip extends GEO {
     /**
      *
@@ -19,10 +29,11 @@ class GEOShip extends GEO {
          * @type {number}
          */
         this.health = 100;
+        this.turnSpeed = 5;
         this.__color = color;
         this.__canFireLasers = true;
         /**
-         * @type {GPoint | null}
+         * @type {GEOShipAutopilot | null}
          * @private
          */
         this.__autopilot = null;
@@ -56,24 +67,20 @@ class GEOShip extends GEO {
     step() {
         super.step();
         if (this.__autopilot !== null) {
-            const stepsSpeedup = 60;
-            const cruiseSpeed = 5;
-            const targetDirection = this.angleTo(this.__autopilot);
+            const speedupSteps = this.__autopilot.acceleration * this.game.fps;
+            const maxSpeedup = this.__autopilot.speed / speedupSteps;
+            const speedDownStepsLeft = this.s / maxSpeedup;
+            const stepsLeft = (this.distanceTo(this.__autopilot)  - this.__autopilot.accuracy) / this.s;
 
-            const stepsLeft = this.distanceTo(this.__autopilot) / cruiseSpeed;
-
-            if (stepsLeft < stepsSpeedup && this.s > 3 && this.s > cruiseSpeed / stepsLeft) {
-                this.s -= cruiseSpeed / stepsSpeedup;
-            } else if (this.s < cruiseSpeed) {
-                this.s += cruiseSpeed / stepsSpeedup;
+            if (stepsLeft < speedDownStepsLeft && this.s > 3) {
+                this.s -= maxSpeedup;
+            } else if (this.s < this.__autopilot.speed) {
+                this.s += maxSpeedup;
             }
 
-            if (Math.abs(this.d - targetDirection) > 1) {
-                const turnSpeed = Math.min(Math.abs(targetDirection - this.d), this.s / 2);
-                this.d += turnSpeed * ((targetDirection - this.d) % 360 <= 180 ? 1 : -1);
-            }
+            this.rotateTo(this.__autopilot.x, this.__autopilot.y);
 
-            if (this.distanceTo(this.__autopilot) < 1.5 * cruiseSpeed) {
+            if (this.distanceTo(this.__autopilot) - this.__autopilot.accuracy < this.s && this.s < 5) {
                 this.s = 0;
                 this.__autopilot = null;
             }
@@ -81,12 +88,31 @@ class GEOShip extends GEO {
     }
 
     /**
-     *
+     * Rotates to face coordinates
+     * @param x {number} target x-coordinates
+     * @param y {number} target y-coordinates
+     * @return {boolean} true if rotations is finished, false if more steps are required
+     */
+    rotateTo(x, y) {
+        const targetDirection = this.angleTo({x, y});
+        const directionDiff = Math.abs(this.d - targetDirection);
+        if (directionDiff > 5) {
+            const turnSpeed = Math.min(this.turnSpeed, Math.abs(targetDirection - this.d), Math.max(this.s / 2, 1));
+            this.d += turnSpeed;
+            return false;
+        } else if (directionDiff > 2) {
+            this.d = targetDirection;
+        }
+        return true;
+    }
+
+    /**
+     * Set autopilot to go to a location
      * @param x {number}
      * @param y {number}
      */
     goto(x, y) {
-        this.__autopilot = {x, y};
+        this.__autopilot = {x, y, speed: 300, accuracy: 0, acceleration: 30};
     }
 
     fireLasers() {

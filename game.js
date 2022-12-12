@@ -95,7 +95,7 @@ function start() {
     }
 
     for (let i = 0; i < 5; i++) {
-        new GEOAsteroidField(GAME, Math.random() * 10000, Math.random() * 10000);
+        new GEOAsteroidField(GAME, Math.random() * 1000000, Math.random() * 1000000);
     }
 
     GAME.run();

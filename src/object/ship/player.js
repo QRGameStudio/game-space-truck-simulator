@@ -70,6 +70,7 @@ class GEOPlayer extends GEOShip {
 
         this.rendererPosition.variables.x = Math.floor(this.x / 10);
         this.rendererPosition.variables.y = Math.floor(this.y / 10);
+        this.rendererPosition.variables.s = Math.round(this.s);
         this.rendererPosition.render();
     }
 }
