@@ -94,6 +94,10 @@ function start() {
         player.goto(x, y);
     }
 
+    for (let i = 0; i < 5; i++) {
+        new GEOAsteroidField(GAME, Math.random() * 10000, Math.random() * 10000);
+    }
+
     GAME.run();
 }
 

@@ -17,13 +17,9 @@ function createAsteroid(game, size = 75, x = null, y = null) {
     obj.d = random() * 360;
     obj.t = 'a';
     obj.cwl.add('l');
-    obj.cwl.add('p');
 
     obj.step = () => {
         obj.ia += spinSpeed;
-        if (obj.distanceFrom(player) > 2 * game.r) {
-            obj.die();
-        }
     }
 
     /** @param other {GEO} */

@@ -49,7 +49,8 @@ class GEOPlayer extends GEOShip {
         this.y = 0;
         this.t = 'p';
 
-        this.rendererPosition = new GRenderer($('.position'), {x: 0, y: 0});
+        this.rendererPosition = new GRenderer($('.position'), {x: 0, y: 0, asteroidFields: GEOAsteroidField.fields});
+        this.rendererPosition.functions.gotoObject = (point)  => this.goto(point.x, point.y);
     }
 
     step() {
@@ -70,7 +71,9 @@ class GEOPlayer extends GEOShip {
 
         this.rendererPosition.variables.x = Math.floor(this.x / 10);
         this.rendererPosition.variables.y = Math.floor(this.y / 10);
-        this.rendererPosition.render();
+        if (this.s > 0) {
+            this.rendererPosition.render();
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 // !G.import('station.js')
-// !G.import('asteroid.js')
+// !G.import('asteroid/index.js')
 // !G.import('laser.js')
 // !G.import('ingot.js')
 // !G.import('ship/index.js')

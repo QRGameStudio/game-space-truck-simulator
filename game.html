@@ -23,10 +23,19 @@
             </ul>
         </div>
         <div class="position">
-            Position:
-            <span r-var="v.x"></span>
-            X
-            <span r-var="v.y"></span>
+            <div>
+                Position:
+                <span r-var="v.x"></span>
+                X
+                <span r-var="v.y"></span>
+            </div>
+            <div r-for="field of v.asteroidFields">
+                <button r-click="f.gotoObject(l.field)">
+                    <span r-var="l.field.x"></span>
+                    X
+                    <span r-var="l.field.y"></span>
+                </button>
+            </div>
         </div>
         <div class="controls">
             <button class="btn" id="fL">!</button>
