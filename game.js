@@ -1,7 +1,10 @@
-// !G.import('src/index.js')
-
 const { random, sin, cos, PI } = Math;
 const $ = document.querySelector.bind(document);
+
+/** @type {GEOPlayer} */
+let player;
+
+// !G.import('src/index.js')
 
 /**
  * @type {GSongLib}
@@ -10,9 +13,6 @@ const MUSIC = new GSongLib();
 
 /** @type {GRenderer} */
 let inventoryRenderer;
-
-/** @type {GEOPlayer} */
-let player;
 
 /** @type {GEG} */
 let GAME;
@@ -48,17 +48,7 @@ function start() {
     GAME.cameraFollowObject = player;
     inventoryRenderer = new GRenderer($('.inventory'), {player});
 
-    let station = new GEOStation(GAME);
-    station.x = 0;
-    station.y = 0;
-
-    station = new GEOStation(GAME);
-    station.x = -300;
-    station.y = -300;
-
-    station = new GEOStation(GAME);
-    station.x = 300;
-    station.y = 300;
+    new GEOStation(GAME, 0, 0);
 
     $('#fR').ontouchstart = () => createLaser(GAME, player, false);
     $('#fL').ontouchstart = () => createLaser(GAME, player, true);
@@ -78,6 +68,16 @@ function start() {
         setTimeout(() => autoSpawnAsteroids(), 2500 + (15000 * random()));
     }
     autoSpawnAsteroids();
+
+    GAME.onStep = () => {
+        if (GEODust.count < 100) {
+            new GEODust(GAME);
+        }
+    };
+
+    for (let i = 0; i < 50; i++) {
+        new GEODust(GAME, true);
+    }
 
     GAME.onKeyDown = (key) => {
         if (key === " ") {

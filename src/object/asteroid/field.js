@@ -4,14 +4,21 @@ class GEOAsteroidField extends GEO {
      * @type {GPoint[]}
      */
     static fields = [];
+    static guiRenderer = new GRenderer(
+        $('.asteroid-fields'),
+        {fields: GEOAsteroidField.fields},
+        {},
+        {gotoObject: (point) => player.goto(point.x, point.y)}
+    );
 
     constructor(game, x, y) {
         super(game);
         this.x = x;
         this.y = y;
         GEOAsteroidField.fields.push({x: Math.floor(x), y: Math.floor(y)});
+        GEOAsteroidField.guiRenderer.render();
         this.__field_radius = Math.random() * 1000;
-        this.generateAsteroids(Math.floor(Math.random() * this.__field_radius / 10))
+        this.generateAsteroids(Math.floor(Math.random() * this.__field_radius / 10));
     }
 
     /**

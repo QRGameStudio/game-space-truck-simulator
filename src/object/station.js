@@ -1,13 +1,31 @@
 class GEOStation extends GEO {
     /**
      *
-     * @param game {GEG}
+     * @type {GPoint[]}
      */
-    constructor(game) {
+    static stations = [];
+    static guiRenderer = new GRenderer(
+        $('.space-stations'),
+        {stations: GEOStation.stations},
+        {},
+        {gotoObject: (point) => player.goto(point.x, point.y)}
+    );
+
+    /**
+     *
+     * @param game {GEG}
+     * @param x {number} x-position
+     * @param y {number} y-position
+     */
+    constructor(game, x, y) {
         super(game);
+        this.x = x;
+        this.y = y;
         this.t = 'station';
         this.w = this.h = 120;
         this.__spin_speed = 1;
+        GEOStation.stations.push({x: this.x, y: this.y});
+        GEOStation.guiRenderer.render();
     }
 
     step() {
