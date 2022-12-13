@@ -13,7 +13,7 @@ function createAsteroid(game, size = 75, x = null, y = null) {
     obj.w = obj.h = size;
     obj.x = x === null ? game.w - obj.wh + (random() * game.w * 0.05) : x;
     obj.y = y === null ? game.h - obj.hh + (random() * game.h * 0.05) : y;
-    obj.s = 1 + random() * 2;
+    obj.s = 0.3 + random();
     obj.d = random() * 360;
     obj.t = 'a';
     obj.cwl.add('l');

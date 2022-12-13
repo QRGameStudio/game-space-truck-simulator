@@ -19,12 +19,6 @@
         <div class="buttons">
             <button id="drone-launch">Launch drone</button>
         </div>
-        <div class="inventory">
-            <ul>
-                <li>Cargo: <span r-var="v.player.inventory.sum()"></span> t</li>
-                <li>Health: <span r-var="v.player.health"></span></li>
-            </ul>
-        </div>
         <div class="position">
             <div>
                 Position:
@@ -35,6 +29,12 @@
             <div>
                 Speed:
                 <span r-var="v.s"></span>
+            </div>
+            <div>
+                <ul>
+                    <li>Cargo: <span r-var="v.inventory.sum"></span>/<span r-var="v.inventory.capacity"></span> t</li>
+                    <li>Health: <span r-var="v.health"></span></li>
+                </ul>
             </div>
             <div r-if="v.autopilot">
                 <ul>

@@ -1,7 +1,20 @@
 class Inventory {
-    constructor() {
+    /**
+     *
+     * @param size {number}
+     */
+    constructor(size) {
         /** @type {Map<string, number>} */
         this.__content = new Map();
+        this.size = size;
+    }
+
+    /**
+     *
+     * @return {boolean}
+     */
+    get full() {
+        return this.sum() >= this.size;
     }
 
     /**
@@ -17,9 +30,14 @@ class Inventory {
      *
      * @param item {string}
      * @param count {number}
+     * @return {boolean}
      */
     add(item, count) {
+        if (this.sum() + count  > this.size) {
+            return false;
+        }
         this.set(item, this.get(item) + count);
+        return true;
     }
 
     /**
@@ -29,6 +47,14 @@ class Inventory {
      */
     get(item) {
         return this.__content.get(item) || 0;
+    }
+
+    /**
+     *
+     * @return {string[]}
+     */
+    keys() {
+        return [...this.__content.keys()];
     }
 
     // noinspection JSUnusedGlobalSymbols
@@ -49,8 +75,7 @@ class GEOPlayer extends GEOShip {
         this.y = 0;
         this.t = 'p';
 
-        this.rendererPosition = new GRenderer($('.position'), {x: 0, y: 0, asteroidFields: GEOAsteroidField.fields});
-        this.rendererInventory = new GRenderer($('.inventory'), {player: PLAYER});
+        this.rendererPosition = new GRenderer($('.position'), {x: 0, y: 0, asteroidFields: GEOAsteroidField.fields, inventory: {sum: 0, capacity: 0}});
     }
 
     step() {
@@ -72,6 +97,10 @@ class GEOPlayer extends GEOShip {
         this.rendererPosition.variables.x = Math.floor(this.x);
         this.rendererPosition.variables.y = Math.floor(this.y);
         this.rendererPosition.variables.s = Math.round(this.s);
+
+        this.rendererPosition.variables.inventory.sum = this.inventory.sum();
+        this.rendererPosition.variables.inventory.capacity = this.inventory.size;
+        this.rendererPosition.variables.health = Math.ceil(this.health);
 
         if (this.__autopilot !== null) {
             this.rendererPosition.variables.autopilot = {

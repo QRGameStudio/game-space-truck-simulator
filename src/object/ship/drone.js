@@ -15,6 +15,7 @@ class GEODrone extends GEOShip {
         this.owner = owner;
         this.returnToOwner = false;
         this.maxOwnerDistance = Math.min(this.game.w, this.game.h);
+        this.inventory.size = 1;
 
         /**
          *
@@ -31,11 +32,16 @@ class GEODrone extends GEOShip {
     step() {
         super.step();
 
-        if (this.returnToOwner || this.distanceFrom(this.owner) > this.maxOwnerDistance) {
+        if (this.returnToOwner  || this.inventory.full || this.distanceFrom(this.owner) > this.maxOwnerDistance) {
             this.returnToOwner = true;
             this.target = null;
 
-            if (this.goto(this.owner.cx, this.owner.cy, this.wantedTargetDistance)) {
+            if (this.goto(this.owner.cx, this.owner.cy, this.owner.r)) {
+                this.inventory.keys().forEach((key) => {
+                    if (this.owner.inventory.add(key, this.inventory.get(key))) {
+                        this.inventory.set(key, 0);
+                    }
+                });
                 this.returnToOwner = false;
             }
         } else {

@@ -11,7 +11,7 @@ function createIngot(game, x, y) {
     obj.h = 20;
     obj.x = x;
     obj.y = y;
-    obj.s = 1 + random() * 2;
+    obj.s = random();
     obj.d = random() * 360;
     obj.t = 'ingot';
     obj.cwl.add('p');
@@ -27,11 +27,9 @@ function createIngot(game, x, y) {
 
     /** @param other {GEOPlayer} */
     obj.oncollision = (other) => {
-        // player hit
-        MUSIC.play('success').then();
-        PLAYER.inventory.add('metal', 1);
-        PLAYER.rendererInventory.render();
-        obj.die();
+        if (other.inventory.add('metal', 1)) {
+            obj.die();
+        }
     };
 
     /**

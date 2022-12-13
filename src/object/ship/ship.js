@@ -22,7 +22,8 @@ class GEOShip extends GEO {
         /**
          * @type {Inventory}
          */
-        this.inventory = new Inventory();
+        this.inventory = new Inventory(32);
+
         /**
          *
          * @type {number}
