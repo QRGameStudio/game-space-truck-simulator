@@ -32,7 +32,7 @@ class GEOStation extends GEO {
         super.step();
         this.ia += this.__spin_speed;
 
-        if (this.distanceFrom(PLAYER) < this.r * 5) {
+        if (this.distanceFrom(PLAYER) < this.r * 5 && PLAYER.s === 0) {
             const metal = PLAYER.inventory.get('metal');
             if (metal) {
                 MUSIC.play('successLong').then();
