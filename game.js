@@ -17,20 +17,6 @@ let inventoryRenderer;
 /** @type {GEG} */
 let GAME;
 
-
-/**
- * @return {number}
- */
-function getSliderSpeed() {
-    const val = $('#iS').value;
-    if (val > 60) {
-        return (val - 50) / 50 * 5;
-    } else if (val < 40) {
-        return (50 - val) / 50 * -3;
-    }
-    return 0;
-}
-
 function start() {
     // noinspection JSValidateTypes
     /**
@@ -50,15 +36,6 @@ function start() {
 
     new GEOStation(GAME, 0, 0);
 
-    $('#fR').ontouchstart = () => createLaser(GAME, player, false);
-    $('#fL').ontouchstart = () => createLaser(GAME, player, true);
-    const bR = $('#bR');
-    const bL = $('#bL');
-    bR.ontouchstart = () => GAME.press('d');
-    bR.ontouchend = () => GAME.release('d');
-    bL.ontouchstart = () => GAME.press('a');
-    bL.ontouchend = () => GAME.release('a');
-
     for (let i = 0; i < 10; i++) {
         createAsteroid(GAME);
     }
@@ -70,7 +47,7 @@ function start() {
     autoSpawnAsteroids();
 
     GAME.onStep = () => {
-        if (GEODust.count < 100) {
+        if (GEODust.count < 100 * Math.log2(Math.abs(player.s) + 1)) {
             new GEODust(GAME);
         }
     };
@@ -92,6 +69,7 @@ function start() {
         }
         setTimeout(() => pointer.die(), 500);
         player.goto(x, y);
+        GAME.canvas.focus();
     }
 
     for (let i = 0; i < 5; i++) {

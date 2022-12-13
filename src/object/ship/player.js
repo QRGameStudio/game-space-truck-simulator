@@ -55,17 +55,17 @@ class GEOPlayer extends GEOShip {
     step() {
         super.step();
         if (this.game.kp('a')) {
-            this.d -= 5;
+            this.d -= this.turnSpeed;
         } else if (this.game.kp('d')) {
-            this.d += 5;
+            this.d += this.turnSpeed;
         }
 
         if (this.game.kp('w')) {
-            this.s = 5;
+            this.accelerate();
+            this.cancelGoto();
         } else if (this.game.kp('s')) {
-            this.s = -3;
-        } else if (!this.__autopilot) {
-            this.s = getSliderSpeed();
+            this.decelerate();
+            this.cancelGoto();
         }
 
         this.rendererPosition.variables.x = Math.floor(this.x / 10);

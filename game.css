@@ -35,15 +35,6 @@ body, #game-layer {
     color: white;
 }
 
-.controls {
-    width: 100%;
-    max-width: 15cm;
-    display: grid;
-    grid-gap: 10px;
-    grid-template-columns: min-content 1fr min-content;
-    justify-items: center;
-}
-
 .inventory {
     color: white;
 }

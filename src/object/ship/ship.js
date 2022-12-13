@@ -2,8 +2,6 @@
  * @typedef {{
  *     x: number,
  *     y: number,
- *     speed: number,
- *     acceleration: number,
  *     accuracy: number
  * }} GEOShipAutopilot
  */
@@ -30,6 +28,8 @@ class GEOShip extends GEO {
          */
         this.health = 100;
         this.turnSpeed = 5;
+        this.maxSpeed = 300;
+        this.acceleration = 30;
         this.__color = color;
         this.__canFireLasers = true;
         /**
@@ -67,15 +67,13 @@ class GEOShip extends GEO {
     step() {
         super.step();
         if (this.__autopilot !== null) {
-            const speedupSteps = this.__autopilot.acceleration * this.game.fps;
-            const maxSpeedup = this.__autopilot.speed / speedupSteps;
-            const speedDownStepsLeft = this.s / maxSpeedup;
+            const speedDownStepsLeft = this.s / this.speedAccelerationPerStep;
             const stepsLeft = (this.distanceTo(this.__autopilot)  - this.__autopilot.accuracy) / this.s;
 
-            if (stepsLeft < speedDownStepsLeft && this.s > 3) {
-                this.s -= maxSpeedup;
-            } else if (this.s < this.__autopilot.speed) {
-                this.s += maxSpeedup;
+            if (stepsLeft < speedDownStepsLeft) {
+                this.decelerate(3);
+            } else {
+                this.accelerate();
             }
 
             this.rotateTo(this.__autopilot.x, this.__autopilot.y);
@@ -85,6 +83,38 @@ class GEOShip extends GEO {
                 this.__autopilot = null;
             }
         }
+    }
+
+    /**
+     * How much can this ship accelerate per step
+     * @return {number}
+     */
+    get speedAccelerationPerStep() {
+        const speedupSteps = this.acceleration * this.game.fps;
+        return this.maxSpeed / speedupSteps;
+    }
+
+    /**
+     * Accelerates up to the maximal speed
+     * @return {boolean} true if maximal speed was reached
+     */
+    accelerate() {
+        const acceleration = this.speedAccelerationPerStep;
+        const newSpeed = Math.min(this.maxSpeed, this.s + acceleration);
+        this.s = newSpeed;
+        return newSpeed === this.maxSpeed;
+    }
+
+    /**
+     * Decelerates speed up to full stop
+     * @param minSpeed {number} minimal speed considered full stop
+     * @return {boolean} true if stopped
+     */
+    decelerate(minSpeed = 0) {
+        const acceleration = this.speedAccelerationPerStep;
+        const newSpeed = Math.max(minSpeed, this.s - acceleration);
+        this.s = newSpeed;
+        return newSpeed === minSpeed;
     }
 
     /**
@@ -112,7 +142,15 @@ class GEOShip extends GEO {
      * @param y {number}
      */
     goto(x, y) {
-        this.__autopilot = {x, y, speed: 300, accuracy: 0, acceleration: 30};
+        this.__autopilot = {x, y, accuracy: 0};
+    }
+
+    /**
+     * Cancels autopilot
+     * @return {undefined}
+     */
+    cancelGoto() {
+        this.__autopilot = null;
     }
 
     fireLasers() {
