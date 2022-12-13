@@ -2,7 +2,8 @@
  * @typedef {{
  *     x: number,
  *     y: number,
- *     accuracy: number
+ *     accuracy: number,
+ *     slowTo: number,
  * }} GEOShipAutopilot
  */
 
@@ -30,8 +31,9 @@ class GEOShip extends GEO {
         this.turnSpeed = 5;
         this.maxSpeed = 300;
         this.acceleration = 30;
-        this.__color = color;
+        this.color = color;
         this.__canFireLasers = true;
+        this.__laserTimeout = 200;
         /**
          * @type {GEOShipAutopilot | null}
          * @private
@@ -40,7 +42,7 @@ class GEOShip extends GEO {
     }
 
     draw(ctx) {
-        ctx.strokeStyle = this.__color;
+        ctx.strokeStyle = this.color;
         ctx.lineWidth = 5;
         ctx.beginPath();
         // front
@@ -71,15 +73,16 @@ class GEOShip extends GEO {
             const stepsLeft = (this.distanceTo(this.__autopilot)  - this.__autopilot.accuracy) / this.s;
 
             if (stepsLeft < speedDownStepsLeft) {
-                this.decelerate(3);
+                this.decelerate(Math.max(this.__autopilot.slowTo, 3));
             } else {
                 this.accelerate();
             }
 
             this.rotateTo(this.__autopilot.x, this.__autopilot.y);
 
-            if (this.distanceTo(this.__autopilot) - this.__autopilot.accuracy < this.s && this.s < 5) {
-                this.s = 0;
+            const targetDistance = this.distanceTo(this.__autopilot);
+            if (targetDistance < this.__autopilot.accuracy && this.s < 5) {
+                this.s = this.__autopilot.slowTo;
                 this.__autopilot = null;
             }
         }
@@ -141,9 +144,17 @@ class GEOShip extends GEO {
      * @param x {number}
      * @param y {number}
      * @param accuracy {number}
+     * @param slowTo {number}
+     * @return true if already at the position
      */
-    goto(x, y, accuracy = 0) {
-        this.__autopilot = {x, y, accuracy};
+    goto(x, y, accuracy = 0, slowTo = 0) {
+        accuracy = Math.max(accuracy, 0);
+
+        if (this.distanceTo({x, y}) <= accuracy) {
+            return true;
+        }
+        this.__autopilot = {x, y, accuracy, slowTo};
+        return false;
     }
 
     /**
@@ -159,8 +170,7 @@ class GEOShip extends GEO {
             return;
         }
         this.__canFireLasers = false;
-        setTimeout(() => this.__canFireLasers = true, 200);
-
+        setTimeout(() => this.__canFireLasers = true, this.__laserTimeout);
         createLaser(this.game, this, true);
         createLaser(this.game, this, false);
     }

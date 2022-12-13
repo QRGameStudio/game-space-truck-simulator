@@ -17,9 +17,6 @@ const MUSIC = new GSongLib();
  */
 const SCORE = new GScore();
 
-/** @type {GRenderer} */
-let inventoryRenderer;
-
 /** @type {GEG} */
 let GAME;
 
@@ -35,7 +32,6 @@ function start() {
 
     PLAYER = new GEOPlayer(GAME);
     GAME.cameraFollowObject = PLAYER;
-    inventoryRenderer = new GRenderer($('.inventory'), {player: PLAYER});
 
     new GEOStation(GAME, 0, 0);
 
@@ -68,8 +64,14 @@ function start() {
         GAME.canvas.focus();
     }
 
+    $('#drone-launch').onclick = () => {
+        const drone = new GEODrone(GAME, PLAYER);
+        drone.x = PLAYER.x;
+        drone.y = PLAYER.y;
+    }
+
     for (let i = 0; i < 5; i++) {
-        const radius = 1000000;
+        const radius = 1000;
         new GEOAsteroidField(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
     }
 

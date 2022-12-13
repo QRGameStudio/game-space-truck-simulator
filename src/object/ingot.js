@@ -15,6 +15,7 @@ function createIngot(game, x, y) {
     obj.d = random() * 360;
     obj.t = 'ingot';
     obj.cwl.add('p');
+    obj.cwl.add('drone');
 
     obj.step = () => {
         obj.ia += spinSpeed;
@@ -28,8 +29,8 @@ function createIngot(game, x, y) {
     obj.oncollision = (other) => {
         // player hit
         MUSIC.play('success').then();
-        other.inventory.add('metal', 1);
-        inventoryRenderer.render();
+        PLAYER.inventory.add('metal', 1);
+        PLAYER.rendererInventory.render();
         obj.die();
     };
 

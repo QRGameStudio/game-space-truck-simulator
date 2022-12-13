@@ -50,6 +50,7 @@ class GEOPlayer extends GEOShip {
         this.t = 'p';
 
         this.rendererPosition = new GRenderer($('.position'), {x: 0, y: 0, asteroidFields: GEOAsteroidField.fields});
+        this.rendererInventory = new GRenderer($('.inventory'), {player: PLAYER});
     }
 
     step() {
