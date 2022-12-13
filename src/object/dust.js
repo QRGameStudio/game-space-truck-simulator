@@ -13,8 +13,8 @@ class GEODust extends GEO {
         super(game);
         this.w = this.h = 6;
         const relativePosition = GUt.pointRelativeTo(
-            player.x,
-            player.y,
+            PLAYER.x,
+            PLAYER.y,
             Math.random() * 360,
             (visible ? 0 : game.r) + Math.random() * game.r,
             (visible ? 0 : game.r) + Math.random() * game.r,
@@ -37,7 +37,7 @@ class GEODust extends GEO {
 
     step() {
         super.step();
-        if (this.distanceFrom(player) > this.game.r * 2) {
+        if (this.distanceFrom(PLAYER) > this.game.r * 2) {
             this.die();
         }
     }

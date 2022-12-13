@@ -19,7 +19,7 @@ function createIngot(game, x, y) {
     obj.step = () => {
         obj.ia += spinSpeed;
 
-        if (obj.distanceFrom(player) > 2 * game.r) {
+        if (obj.distanceFrom(PLAYER) > 2 * game.r) {
             obj.die();
         }
     }

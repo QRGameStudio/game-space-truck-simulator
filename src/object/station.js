@@ -8,7 +8,7 @@ class GEOStation extends GEO {
         $('.space-stations'),
         {stations: GEOStation.stations},
         {},
-        {gotoObject: (point) => player.goto(point.x, point.y)}
+        {gotoObject: (point) => PLAYER.goto(point.x, point.y, 200)}
     );
 
     /**
@@ -31,20 +31,19 @@ class GEOStation extends GEO {
     step() {
         super.step();
         this.ia += this.__spin_speed;
+
+        if (this.distanceFrom(PLAYER) < this.r * 5) {
+            const metal = PLAYER.inventory.get('metal');
+            if (metal) {
+                MUSIC.play('successLong').then();
+                SCORE.inc(metal).then(() => PLAYER.inventory.set('metal', 0));
+            }
+        }
     }
 
     draw(ctx) {
         ctx.strokeStyle = 'white';
         ctx.lineWidth = 7;
         ctx.strokeRect(this.x - this.wh, this.y - this.hh, this.w, this.h);
-    }
-
-    // noinspection JSUnusedGlobalSymbols
-    /**
-     * Creates new GEO station for the current game
-     * @return {GEOStation}
-     */
-    static new() {
-        return new GEOStation(GAME);
     }
 }

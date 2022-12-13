@@ -140,9 +140,10 @@ class GEOShip extends GEO {
      * Set autopilot to go to a location
      * @param x {number}
      * @param y {number}
+     * @param accuracy {number}
      */
-    goto(x, y) {
-        this.__autopilot = {x, y, accuracy: 0};
+    goto(x, y, accuracy = 0) {
+        this.__autopilot = {x, y, accuracy};
     }
 
     /**

@@ -2,7 +2,7 @@ const { random, sin, cos, PI } = Math;
 const $ = document.querySelector.bind(document);
 
 /** @type {GEOPlayer} */
-let player;
+let PLAYER;
 
 // !G.import('src/index.js')
 
@@ -10,6 +10,12 @@ let player;
  * @type {GSongLib}
  */
 const MUSIC = new GSongLib();
+
+/**
+ *
+ * @type {GScore}
+ */
+const SCORE = new GScore();
 
 /** @type {GRenderer} */
 let inventoryRenderer;
@@ -26,39 +32,29 @@ function start() {
     GAME = new GEG(canvas);
 
     GAME.res = GUt.isLandscape() ? {w: 1920, h: 1080} : {w: 1080, h: 1920};
-    GAME.paused = true;
-    GAME.objects.length = 0;
-    GAME.paused = false;
 
-    player = new GEOPlayer(GAME);
-    GAME.cameraFollowObject = player;
-    inventoryRenderer = new GRenderer($('.inventory'), {player});
+    PLAYER = new GEOPlayer(GAME);
+    GAME.cameraFollowObject = PLAYER;
+    inventoryRenderer = new GRenderer($('.inventory'), {player: PLAYER});
 
     new GEOStation(GAME, 0, 0);
 
-    for (let i = 0; i < 10; i++) {
-        createAsteroid(GAME);
-    }
+    (() => {
+        const dustCount = 100;
+        GAME.onStep = () => {
+            if (GEODust.count < dustCount * Math.log2(Math.abs(PLAYER.s) + 1)) {
+                new GEODust(GAME);
+            }
+        };
 
-    function autoSpawnAsteroids() {
-        createAsteroid(GAME);
-        setTimeout(() => autoSpawnAsteroids(), 2500 + (15000 * random()));
-    }
-    autoSpawnAsteroids();
-
-    GAME.onStep = () => {
-        if (GEODust.count < 100 * Math.log2(Math.abs(player.s) + 1)) {
-            new GEODust(GAME);
+        for (let i = 0; i < dustCount / 2; i++) {
+            new GEODust(GAME, true);
         }
-    };
-
-    for (let i = 0; i < 50; i++) {
-        new GEODust(GAME, true);
-    }
+    })();
 
     GAME.onKeyDown = (key) => {
         if (key === " ") {
-            player.fireLasers();
+            PLAYER.fireLasers();
         }
     }
     GAME.onClick = (x, y) => {
@@ -68,12 +64,13 @@ function start() {
             ctx.fillRect(pointer.x - 2, pointer.y - 2, 4, 4);
         }
         setTimeout(() => pointer.die(), 500);
-        player.goto(x, y);
+        PLAYER.goto(x, y);
         GAME.canvas.focus();
     }
 
     for (let i = 0; i < 5; i++) {
-        new GEOAsteroidField(GAME, Math.random() * 1000000, Math.random() * 1000000);
+        const radius = 1000000;
+        new GEOAsteroidField(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
     }
 
     GAME.run();

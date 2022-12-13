@@ -8,7 +8,7 @@ class GEOAsteroidField extends GEO {
         $('.asteroid-fields'),
         {fields: GEOAsteroidField.fields},
         {},
-        {gotoObject: (point) => player.goto(point.x, point.y)}
+        {gotoObject: (point) => { PLAYER.goto(point.x, point.y); GAME.canvas.focus(); }}
     );
 
     constructor(game, x, y) {

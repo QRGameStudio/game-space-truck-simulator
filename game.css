@@ -35,6 +35,10 @@ body, #game-layer {
     color: white;
 }
 
+.controls-c > *:not(:last-child) {
+    margin-right: 1em;
+}
+
 .inventory {
     color: white;
 }

@@ -68,9 +68,18 @@ class GEOPlayer extends GEOShip {
             this.cancelGoto();
         }
 
-        this.rendererPosition.variables.x = Math.floor(this.x / 10);
-        this.rendererPosition.variables.y = Math.floor(this.y / 10);
+        this.rendererPosition.variables.x = Math.floor(this.x);
+        this.rendererPosition.variables.y = Math.floor(this.y);
         this.rendererPosition.variables.s = Math.round(this.s);
+
+        if (this.__autopilot !== null) {
+            this.rendererPosition.variables.autopilot = {
+                time: Math.floor(this.distanceTo(this.__autopilot) / (this.s * this.game.fps))
+            }
+        } else {
+            this.rendererPosition.variables.autopilot = null;
+        }
+
         this.rendererPosition.render();
     }
 }

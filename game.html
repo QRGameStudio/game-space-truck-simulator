@@ -33,6 +33,12 @@
                 Speed:
                 <span r-var="v.s"></span>
             </div>
+            <div r-if="v.autopilot">
+                <ul>
+                    <li>Autopilot active</li>
+                    <li>ETA: <span r-var="v.autopilot.time"></span> s</li>
+                </ul>
+            </div>
         </div>
         <div class="space-stations">
             <div r-for="field of v.stations">
