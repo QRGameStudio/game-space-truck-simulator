@@ -11,7 +11,7 @@ function createIngot(game, x, y) {
     obj.h = 20;
     obj.x = x;
     obj.y = y;
-    obj.s = random();
+    obj.s = 0.3 * random();
     obj.d = random() * 360;
     obj.t = 'ingot';
     obj.cwl.add('p');

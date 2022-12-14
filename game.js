@@ -29,6 +29,7 @@ function start() {
     GAME = new GEG(canvas);
 
     GAME.res = GUt.isLandscape() ? {w: 1920, h: 1080} : {w: 1080, h: 1920};
+    GAME.zoom = 2/3;
 
     PLAYER = new GEOPlayer(GAME);
     GAME.cameraFollowObject = PLAYER;
@@ -64,14 +65,8 @@ function start() {
         GAME.canvas.focus();
     }
 
-    $('#drone-launch').onclick = () => {
-        const drone = new GEODrone(GAME, PLAYER);
-        drone.x = PLAYER.x;
-        drone.y = PLAYER.y;
-    }
-
     for (let i = 0; i < 5; i++) {
-        const radius = 1000;
+        const radius = 100000;
         new GEOAsteroidField(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
     }
 

@@ -27,9 +27,68 @@ class GEODrone extends GEOShip {
         this.t = 'drone';
 
         this.__laserTimeout = 2000;
+
+        this.__docked = false;
+        /**
+         *
+         * @type {GPoint}
+         * @private
+         */
+        this.__docked_size = {x: this.w, y: this.h};
+
+        this.dock();
+    }
+
+    /**
+     *
+     * @return {boolean}
+     */
+    get docked() {
+        return this.__docked;
+    }
+
+    dock() {
+        if (this.__docked) {
+            return;
+        }
+
+        this.__docked = true;
+        this.__docked_size = {x: this.w, y: this.h};
+        this.w = 0;
+        this.h = 0;
+        this.x = -1111111;
+        this.y = -1010101;
+    }
+
+    /**
+     *
+     * @param point {GPoint}
+     */
+    launch(point) {
+        if (!this.__docked) {
+            return;
+        }
+
+        this.x = point.x;
+        this.y = point.y;
+        this.w = this.__docked_size.x;
+        this.h = this.__docked_size.y;
+
+        this.__docked = false;
+    }
+
+    draw(ctx) {
+        if (this.__docked) {
+            return;
+        }
+        super.draw(ctx);
     }
 
     step() {
+        if (this.__docked) {
+            return;
+        }
+
         super.step();
 
         if (this.returnToOwner  || this.inventory.full || this.distanceFrom(this.owner) > this.maxOwnerDistance) {
@@ -56,7 +115,6 @@ class GEODrone extends GEOShip {
                     case 'a':
                         const maxTargetDistance = this.r + this.wantedTargetDistance + this.target.r - this.target.s * 2;
                         if (this.goto(this.target.cx, this.target.cy, maxTargetDistance, this.target.s * 2) && this.rotateTo(this.target.cx, this.target.cy)) {
-                            console.log('firing lasers');
                             this.fireLasers();
                         }
                         break;

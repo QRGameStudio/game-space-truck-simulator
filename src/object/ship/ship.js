@@ -131,8 +131,9 @@ class GEOShip extends GEO {
         const targetDirection = this.angleTo({x, y});
         const directionDiff = Math.abs(this.d - targetDirection);
         if (directionDiff > 5) {
-            const turnSpeed = Math.min(this.turnSpeed, Math.abs(targetDirection - this.d), Math.max(this.s / 2, 1));
-            this.d += turnSpeed;
+            const turnSpeed = Math.max(Math.min(this.turnSpeed, Math.abs(targetDirection - this.d)), this.s * 1.1);
+            const relativeDirectionDiff = GUt.relativeAngle(targetDirection - this.d);
+            this.d += turnSpeed * (relativeDirectionDiff >= -5 ? 1 : -1);
             return false;
         } else if (directionDiff > 2) {
             this.d = targetDirection;
@@ -148,7 +149,7 @@ class GEOShip extends GEO {
      * @param slowTo {number}
      * @return true if already at the position
      */
-    goto(x, y, accuracy = 0, slowTo = 0) {
+    goto(x, y, accuracy = Math.min(this.wh, this.hh), slowTo = 0) {
         accuracy = Math.max(accuracy, 0);
 
         if (this.distanceTo({x, y}) <= accuracy) {

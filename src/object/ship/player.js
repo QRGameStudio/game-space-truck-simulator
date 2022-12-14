@@ -75,7 +75,13 @@ class GEOPlayer extends GEOShip {
         this.y = 0;
         this.t = 'p';
 
-        this.rendererPosition = new GRenderer($('.position'), {x: 0, y: 0, asteroidFields: GEOAsteroidField.fields, inventory: {sum: 0, capacity: 0}});
+        this.drone = new GEODrone(this.game, this);
+
+        this.rendererDrone = new GRenderer($('.drone'));
+        this.__renderDrone();
+        this.rendererPosition = new GRenderer($('.position'),
+            {x: 0, y: 0, asteroidFields: GEOAsteroidField.fields, inventory: {sum: 0, capacity: 0},
+            drone: false});
     }
 
     step() {
@@ -111,6 +117,26 @@ class GEOPlayer extends GEOShip {
         }
 
         this.rendererPosition.render();
+    }
+
+    __renderDrone() {
+        this.rendererDrone.variables.docked = this.drone.docked;
+        this.rendererDrone.functions.launch = () => {
+          if (!this.drone.docked) {
+              return;
+          }
+          this.drone.launch({x: this.cx, y: this.cy});
+          this.__renderDrone();
+        };
+        this.rendererDrone.functions.dock = () => {
+            if (this.drone.docked || this.distanceFrom(this.drone) > 2 * (this.r + this.drone.r)) {
+                this.drone.returnToOwner = true;
+                return;
+            }
+            this.drone.dock();
+            this.__renderDrone();
+        };
+        this.rendererDrone.render();
     }
 }
 
