@@ -20,6 +20,13 @@ const SCORE = new GScore();
 /** @type {GEG} */
 let GAME;
 
+function initMusic() {
+    MUSIC.cache['laser'] = [[["C8"],50],[["D7"],50]];
+    MUSIC.cache['humm0'] =  [[["C1"],50],[["D1"],50]];
+    MUSIC.cache['humm1'] =  [[["C2"],50],[["D2"],50]];
+    MUSIC.cache['humm2'] =  [[["C3"],50],[["D3"],50]];
+}
+
 function start() {
     // noinspection JSValidateTypes
     /**
@@ -29,7 +36,7 @@ function start() {
     GAME = new GEG(canvas);
 
     GAME.res = GUt.isLandscape() ? {w: 1920, h: 1080} : {w: 1080, h: 1920};
-    GAME.zoom = 2/3;
+    // GAME.zoom = 2/3;
 
     PLAYER = new GEOPlayer(GAME);
     GAME.cameraFollowObject = PLAYER;
@@ -70,6 +77,9 @@ function start() {
         new GEOAsteroidField(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
     }
 
+    // new GEOPirate(GAME);
+
+    initMusic();
     GAME.run();
 }
 

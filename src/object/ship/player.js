@@ -82,6 +82,8 @@ class GEOPlayer extends GEOShip {
         this.rendererPosition = new GRenderer($('.position'),
             {x: 0, y: 0, asteroidFields: GEOAsteroidField.fields, inventory: {sum: 0, capacity: 0},
             drone: false});
+
+        this.__playEnginesHumm();
     }
 
     step() {
@@ -137,6 +139,21 @@ class GEOPlayer extends GEOShip {
             this.__renderDrone();
         };
         this.rendererDrone.render();
+    }
+
+    __playEnginesHumm() {
+        let sound;
+        if (this.s < 30) {
+            sound = 'humm0';
+        } else if (this.s < 100) {
+            sound = 'humm1';
+        } else {
+            sound = 'humm2';
+        }
+
+        const volume = this.s < 1 ? 0 : 5 + 50 * (this.s / this.maxSpeed);
+
+        MUSIC.play(sound, 1, volume).then(() => this.__playEnginesHumm());
     }
 }
 

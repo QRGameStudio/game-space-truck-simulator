@@ -2,6 +2,7 @@
  * @param game {GEG}
  * @param player {GEO}
  * @param isLeft {boolean}
+ * @return {GEO}
  */
 function createLaser(game, player, isLeft) {
     const obj = game.createObject(player.wh, player.hh * 2/3 * (isLeft ? -1 : 1), 0, player);
@@ -21,7 +22,9 @@ function createLaser(game, player, isLeft) {
         ctx.closePath();
         ctx.stroke();
     }
-    MUSIC.play('action').then();
+    MUSIC.play('laser').then();
 
     obj.onscreenleft = () => obj.die();
+
+    return obj;
 }

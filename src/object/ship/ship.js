@@ -71,10 +71,12 @@ class GEOShip extends GEO {
         super.step();
         if (this.__autopilot !== null) {
             const speedDownStepsLeft = this.s / this.speedAccelerationPerStep;
-            const stepsLeft = (this.distanceTo(this.__autopilot)  - this.__autopilot.accuracy) / this.s;
+            const distanceLeft = this.distanceTo(this.__autopilot) - this.__autopilot.accuracy;
+            const stepsLeft = distanceLeft / this.s;
+            const closingIn = distanceLeft > this.r * 5 || this.s < 1 ? true : this.game.distanceBetween(this.__autopilot, this.nextPos) <= this.distanceTo(this.__autopilot);
 
-            if (stepsLeft < speedDownStepsLeft) {
-                this.decelerate(Math.max(this.__autopilot.slowTo, 3));
+            if (!closingIn || stepsLeft < speedDownStepsLeft) {
+                this.decelerate(closingIn ? Math.max(this.__autopilot.slowTo, 3) : 0);
             } else {
                 this.accelerate();
             }
@@ -131,7 +133,7 @@ class GEOShip extends GEO {
         const targetDirection = this.angleTo({x, y});
         const directionDiff = Math.abs(this.d - targetDirection);
         if (directionDiff > 5) {
-            const turnSpeed = Math.max(Math.min(this.turnSpeed, Math.abs(targetDirection - this.d)), this.s * 1.1);
+            const turnSpeed = this.s > 1 ? Math.max(Math.min(this.turnSpeed, Math.abs(targetDirection - this.d), this.s / 2), 1) : this.turnSpeed;
             const relativeDirectionDiff = GUt.relativeAngle(targetDirection - this.d);
             this.d += turnSpeed * (relativeDirectionDiff >= -5 ? 1 : -1);
             return false;
@@ -173,7 +175,7 @@ class GEOShip extends GEO {
         }
         this.__canFireLasers = false;
         setTimeout(() => this.__canFireLasers = true, this.__laserTimeout);
-        createLaser(this.game, this, true);
-        createLaser(this.game, this, false);
+        createLaser(this.game, this, true).s += this.s;
+        createLaser(this.game, this, false).s += this.s;
     }
 }
