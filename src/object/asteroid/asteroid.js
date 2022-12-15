@@ -28,7 +28,7 @@ function createAsteroid(game, size = 75, x = null, y = null) {
             case 'l':
                 // laser hit
                 // noinspection JSIgnoredPromiseFromCall
-                MUSIC.play('boom');
+                MUSIC.play('boom', 1, 5);
                 if (obj.w >= 30) {
                     createAsteroid(game, obj.wh, obj.x - obj.wh, obj.y);
                     createAsteroid(game, obj.wh, obj.x + obj.wh, obj.y);

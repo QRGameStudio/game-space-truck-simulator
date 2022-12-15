@@ -74,7 +74,7 @@ class GEOShip extends GEO {
             const speedDownStepsLeft = this.s / this.speedAccelerationPerStep;
             const distanceLeft = this.distanceTo(this.__autopilot) - this.__autopilot.accuracy;
             const stepsLeft = distanceLeft / this.s;
-            const closingIn = distanceLeft > this.r * 5 || this.s < 1 ? true : this.game.distanceBetween(this.__autopilot, this.nextPos) <= this.distanceTo(this.__autopilot);
+            const closingIn = (distanceLeft > this.r * 5 && this.s > this.turnSpeed) || this.s < 1 ? true : this.game.distanceBetween(this.__autopilot, this.nextPos) <= this.distanceTo(this.__autopilot);
 
             if (this.s > this.maxSpeed || !closingIn || stepsLeft < speedDownStepsLeft) {
                 this.decelerate(closingIn ? Math.max(this.__autopilot.slowTo, 3) : 0);

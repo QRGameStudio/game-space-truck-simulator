@@ -85,6 +85,8 @@ class GEOPlayer extends GEOShip {
 
         this.__playEnginesHumm();
         this.__pirateAlertPlayed = false;
+        this.__cargoFullAlertPlayed = false;
+        this.__droneIdleAlertPlayed = false;
     }
 
     step() {
@@ -104,6 +106,8 @@ class GEOPlayer extends GEOShip {
         }
 
         this.__playNearestPirateAlert();
+        this.__playCargoFullAlert();
+        this.__playDroneIdleAlert();
 
         this.rendererPosition.variables.x = Math.floor(this.x);
         this.rendererPosition.variables.y = Math.floor(this.y);
@@ -139,13 +143,32 @@ class GEOPlayer extends GEOShip {
 
         const distance = this.distanceFrom(nearestPirate);
         const secondsToArrival = distance / (nearestPirate.s * this.game.fps);
-        if (secondsToArrival > 10 && nearestPirate.target === this) {
+        if (secondsToArrival > 10 || nearestPirate.target !== this) {
             this.__pirateAlertPlayed = false;
         } else if (!this.__pirateAlertPlayed) {
             this.__pirateAlertPlayed = true;
             MUSIC.play('alert');
         }
     }
+
+    __playCargoFullAlert() {
+        if (this.inventory.full && !this.__cargoFullAlertPlayed) {
+            this.__cargoFullAlertPlayed = true;
+            MUSIC.play('cargoFull');
+        } else if (!this.inventory.full && this.__cargoFullAlertPlayed) {
+            this.__cargoFullAlertPlayed = false;
+        }
+    }
+
+    __playDroneIdleAlert() {
+        if (this.drone.idle && !this.__droneIdleAlertPlayed) {
+            this.__droneIdleAlertPlayed = true;
+            MUSIC.play('cargoFull');
+        } else if (!this.drone.idle && this.__droneIdleAlertPlayed) {
+            this.__droneIdleAlertPlayed = false;
+        }
+    }
+
 
     __renderDrone() {
         const isInDockingRange = () => this.distanceFrom(this.drone) <= 2 * (this.r + this.drone.r);

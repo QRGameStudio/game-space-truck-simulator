@@ -27,6 +27,7 @@ function initMusic() {
     MUSIC.cache['humm2'] =  [[["C3"],50],[["D3"],50]];
     MUSIC.cache['alert'] = [[["C2"],500],[["C4"],500],[["C2"],500],[["C4"],500],[["silence"],250],[["C2"],500],[["C4"],500],[["C2"],500],[["C4"],500],[["silence"],250],[[],500]];
     MUSIC.cache['boom'] = [[["C1"],100],[["C2"],100],[["C1"],100],[[],500]];
+    MUSIC.cache['cargoFull'] = [[["A3"],200],[["B3"],200],[["C4"],200],[["D4"],500],[[],500]];
 }
 
 function start() {
@@ -74,7 +75,7 @@ function start() {
         GAME.canvas.focus();
     }
 
-    const radius = 100000;
+    const radius = 1000000;
     const fields = 5;
     for (let i = 0; i < fields; i++) {
         new GEOAsteroidField(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);

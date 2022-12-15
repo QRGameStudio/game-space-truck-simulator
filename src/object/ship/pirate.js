@@ -15,7 +15,7 @@ class GEOPirate extends GEOShip {
          */
         this.target = null;
         this.wantedTargetDistance = 30;
-        this.maxTargetDistance = this.game.r * 4;
+        this.maxTargetDistance = 40000;
         this.t = 'pirate';
 
         this.maxSpeed = 50;
@@ -32,13 +32,15 @@ class GEOPirate extends GEOShip {
 
     step() {
         super.step();
+        console.log('Pirate', this.x, this.y, this.target, this.__autopilot);
 
         if (this.target !== null && (this.target.is_dead || this.distanceFrom(this.target) > this.maxTargetDistance)) {
+            this.__autopilot = null;
             this.target = null;
         }
 
         if (this.target === null) {
-            this.target = this.getNearest('p') || null;
+            this.target = this.getNearest('p', this.maxTargetDistance) || null;
 
             if (this.__autopilot === null) {
                 const asteroidField = GEOAsteroidField.fields[Math.floor(Math.random() * GEOAsteroidField.fields.length)];

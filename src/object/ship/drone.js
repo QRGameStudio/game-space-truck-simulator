@@ -36,7 +36,17 @@ class GEODrone extends GEOShip {
          */
         this.__docked_size = {x: this.w, y: this.h};
 
+        this.__idle = false;
+
         this.dock();
+    }
+
+    /**
+     *
+     * @return {boolean}
+     */
+    get idle() {
+        return this.__idle;
     }
 
     /**
@@ -52,6 +62,7 @@ class GEODrone extends GEOShip {
             return;
         }
 
+        this.__idle = false;
         this.__docked = true;
         this.__docked_size = {x: this.w, y: this.h};
         this.w = 0;
@@ -75,6 +86,7 @@ class GEODrone extends GEOShip {
         this.h = this.__docked_size.y;
 
         this.__docked = false;
+        this.__idle = false;
     }
 
     draw(ctx) {
@@ -109,8 +121,13 @@ class GEODrone extends GEOShip {
             }
 
             if (this.target === null) {
-                this.target = this.getNearest('ingot') || this.getNearest('a') || null;
+                this.target = this.getNearest('ingot', this.maxTargetDistance) || this.getNearest('a', this.maxTargetDistance);
+                if (this.target === null) {
+                    this.returnToOwner = true;
+                    this.__idle = true;
+                }
             } else {
+                this.__idle = false;
                 switch (this.target.t) {
                     case 'a':
                         const maxTargetDistance = this.r + this.wantedTargetDistance + this.target.r - this.target.s * 2;
