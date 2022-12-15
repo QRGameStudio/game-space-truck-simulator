@@ -35,6 +35,7 @@ class GEOShip extends GEO {
         this.color = color;
         this.__canFireLasers = true;
         this.__laserTimeout = 200;
+        this.__lasersTargets = ['a', 'pirate'];
         /**
          * @type {GEOShipAutopilot | null}
          * @private
@@ -75,7 +76,7 @@ class GEOShip extends GEO {
             const stepsLeft = distanceLeft / this.s;
             const closingIn = distanceLeft > this.r * 5 || this.s < 1 ? true : this.game.distanceBetween(this.__autopilot, this.nextPos) <= this.distanceTo(this.__autopilot);
 
-            if (!closingIn || stepsLeft < speedDownStepsLeft) {
+            if (this.s > this.maxSpeed || !closingIn || stepsLeft < speedDownStepsLeft) {
                 this.decelerate(closingIn ? Math.max(this.__autopilot.slowTo, 3) : 0);
             } else {
                 this.accelerate();
@@ -118,7 +119,7 @@ class GEOShip extends GEO {
      */
     decelerate(minSpeed = 0) {
         const acceleration = this.speedAccelerationPerStep;
-        const newSpeed = Math.max(minSpeed, this.s - acceleration);
+        const newSpeed = Math.max(Math.min(minSpeed, this.maxSpeed), this.s - acceleration);
         this.s = newSpeed;
         return newSpeed === minSpeed;
     }
@@ -175,7 +176,7 @@ class GEOShip extends GEO {
         }
         this.__canFireLasers = false;
         setTimeout(() => this.__canFireLasers = true, this.__laserTimeout);
-        createLaser(this.game, this, true).s += this.s;
-        createLaser(this.game, this, false).s += this.s;
+        createLaser(this.game, this, true, this.__lasersTargets).s += this.s;
+        createLaser(this.game, this, false, this.__lasersTargets).s += this.s;
     }
 }

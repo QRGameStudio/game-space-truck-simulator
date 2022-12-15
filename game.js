@@ -72,12 +72,16 @@ function start() {
         GAME.canvas.focus();
     }
 
+    const radius = 100000;
     for (let i = 0; i < 5; i++) {
-        const radius = 100000;
         new GEOAsteroidField(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
     }
 
-    // new GEOPirate(GAME);
+    for (let i = 0; i < 3; i++) {
+        const pirate = new GEOPirate(GAME);
+        pirate.x = Math.random() * radius * 2 - radius;
+        pirate.y = Math.random() * radius * 2 - radius;
+    }
 
     initMusic();
     GAME.run();
