@@ -84,6 +84,7 @@ class GEOPlayer extends GEOShip {
             drone: false});
 
         this.__playEnginesHumm();
+        this.__pirateAlertPlayed = false;
     }
 
     step() {
@@ -102,6 +103,8 @@ class GEOPlayer extends GEOShip {
             this.cancelGoto();
         }
 
+        this.__playNearestPirateAlert();
+
         this.rendererPosition.variables.x = Math.floor(this.x);
         this.rendererPosition.variables.y = Math.floor(this.y);
         this.rendererPosition.variables.s = Math.round(this.s);
@@ -119,10 +122,40 @@ class GEOPlayer extends GEOShip {
         }
 
         this.rendererPosition.render();
+        this.__renderDrone();
+    }
+
+    __playNearestPirateAlert() {
+        /**
+         *
+         * @type {GEOPirate|undefined}
+         */
+        const nearestPirate = this.getNearest('pirate');
+
+        if (nearestPirate === undefined) {
+            this.__pirateAlertPlayed = false;
+            return;
+        }
+
+        const distance = this.distanceFrom(nearestPirate);
+        const secondsToArrival = distance / (nearestPirate.s * this.game.fps);
+        if (secondsToArrival > 10 && nearestPirate.target === this) {
+            this.__pirateAlertPlayed = false;
+        } else if (!this.__pirateAlertPlayed) {
+            this.__pirateAlertPlayed = true;
+            MUSIC.play('alert');
+        }
     }
 
     __renderDrone() {
+        const isInDockingRange = () => this.distanceFrom(this.drone) <= 2 * (this.r + this.drone.r);
+
+        if (this.rendererDrone.variables.inRange === isInDockingRange() && this.rendererDrone.variables.docked === this.drone.docked) {
+            return;
+        }
+
         this.rendererDrone.variables.docked = this.drone.docked;
+        this.rendererDrone.variables.inRange = isInDockingRange();
         this.rendererDrone.functions.launch = () => {
           if (!this.drone.docked) {
               return;
@@ -130,8 +163,11 @@ class GEOPlayer extends GEOShip {
           this.drone.launch({x: this.cx, y: this.cy});
           this.__renderDrone();
         };
+        this.rendererDrone.functions.recall = () => {
+            this.drone.returnToOwner = true;
+        }
         this.rendererDrone.functions.dock = () => {
-            if (this.drone.docked || this.distanceFrom(this.drone) > 2 * (this.r + this.drone.r)) {
+            if (this.drone.docked) {
                 this.drone.returnToOwner = true;
                 return;
             }

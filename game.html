@@ -18,8 +18,13 @@
     <div class="controls-c">
         <div class="buttons">
             <div class="drone">
-                <button r-if="!v.docked" r-click="f.dock()">Dock drone</button>
                 <button r-if="v.docked" r-click="f.launch()">Launch drone</button>
+                <button r-if="!v.docked && v.inRange" r-click="f.dock()">
+                    Dock drone
+                </button>
+                <button r-if="!v.docked && !v.inRange" r-click="f.recall()">
+                    Recall drone
+                </button>
             </div>
         </div>
         <div class="position">

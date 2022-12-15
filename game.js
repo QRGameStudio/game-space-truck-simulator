@@ -25,6 +25,8 @@ function initMusic() {
     MUSIC.cache['humm0'] =  [[["C1"],50],[["D1"],50]];
     MUSIC.cache['humm1'] =  [[["C2"],50],[["D2"],50]];
     MUSIC.cache['humm2'] =  [[["C3"],50],[["D3"],50]];
+    MUSIC.cache['alert'] = [[["C2"],500],[["C4"],500],[["C2"],500],[["C4"],500],[["silence"],250],[["C2"],500],[["C4"],500],[["C2"],500],[["C4"],500],[["silence"],250],[[],500]];
+    MUSIC.cache['boom'] = [[["C1"],100],[["C2"],100],[["C1"],100],[[],500]];
 }
 
 function start() {
@@ -73,11 +75,12 @@ function start() {
     }
 
     const radius = 100000;
-    for (let i = 0; i < 5; i++) {
+    const fields = 5;
+    for (let i = 0; i < fields; i++) {
         new GEOAsteroidField(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
     }
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < Math.max(Math.floor(fields / 10), 1); i++) {
         const pirate = new GEOPirate(GAME);
         pirate.x = Math.random() * radius * 2 - radius;
         pirate.y = Math.random() * radius * 2 - radius;
