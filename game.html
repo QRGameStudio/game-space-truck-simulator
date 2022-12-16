@@ -26,10 +26,13 @@
             </div>
 
             <div>
-                Position: <span r-var="v.system"></span> (<span r-var="v.x"></span> X <span r-var="v.y"></span>)
+                <!-- Position -->
+                <span r-var="GUt.ud('8J+TjA==')"></span>
+                <span r-var="v.system"></span> (<span r-var="v.x"></span> X <span r-var="v.y"></span>)
             </div>
             <div>
-                Speed:
+                <!-- Speed -->
+                <span r-var="GUt.ud('4o+p')"></span>
                 <span r-var="v.s"></span>
             </div>
             <div>
@@ -40,13 +43,21 @@
             </div>
         </div>
         <div class="buttons">
-            <button id="btnMap">Open map</button>
+            <button id="btnMap" class="btn btn-secondary">
+                Open map
+                <span r-var="GUt.ud('8J+Vue+4jw==')"></span>
+            </button>
             <div class="drone">
-                <button r-if="v.docked" r-click="f.launch()">Launch drone</button>
-                <button r-if="!v.docked && v.inRange" r-click="f.dock()">
+                <button r-if="v.docked" class="btn btn-primary" r-click="f.launch()">
+                    <span r-var="GUt.ud('8J+Vue+4jw==')"></span>
+                    Launch drone
+                </button>
+                <button r-if="!v.docked && v.inRange" class="btn btn-primary" r-click="f.dock()">
+                    <span r-var="GUt.ud('8J+Vue+4jw==')"></span>
                     Dock drone
                 </button>
-                <button r-if="!v.docked && !v.inRange" r-click="f.recall()">
+                <button r-if="!v.docked && !v.inRange" class="btn btn-primary" r-click="f.recall()">
+                    <span r-var="GUt.ud('8J+Vue+4jw==')"></span>
                     Recall drone
                 </button>
             </div>
