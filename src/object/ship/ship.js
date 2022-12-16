@@ -74,7 +74,8 @@ class GEOShip extends GEO {
             const speedDownStepsLeft = this.s / this.speedAccelerationPerStep;
             const distanceLeft = this.distanceTo(this.__autopilot) - this.__autopilot.accuracy;
             const stepsLeft = distanceLeft / this.s;
-            const closingIn = (distanceLeft > this.r * 5 && this.s > this.turnSpeed) || this.s < 1 ? true : this.game.distanceBetween(this.__autopilot, this.nextPos) <= this.distanceTo(this.__autopilot);
+            const closingIn = this.s < 1 ? true : this.game.distanceBetween(this.__autopilot, this.nextPos) <= this.distanceTo(this.__autopilot);
+            console.log(closingIn, this.__autopilot, this.game.distanceBetween(this.__autopilot, this.nextPos), this.distanceTo(this.__autopilot), this.x, this.y, this.nextPos);
 
             if (this.s > this.maxSpeed || !closingIn || stepsLeft < speedDownStepsLeft) {
                 this.decelerate(closingIn ? Math.max(this.__autopilot.slowTo, 3) : 0);
@@ -85,7 +86,7 @@ class GEOShip extends GEO {
             this.rotateTo(this.__autopilot.x, this.__autopilot.y);
 
             const targetDistance = this.distanceTo(this.__autopilot);
-            if (targetDistance < this.__autopilot.accuracy && this.s < 5) {
+            if (targetDistance < this.__autopilot.accuracy && this.s < this.__autopilot.slowTo + 5) {
                 this.s = this.__autopilot.slowTo;
                 this.__autopilot = null;
             }
@@ -134,7 +135,7 @@ class GEOShip extends GEO {
         const targetDirection = this.angleTo({x, y});
         const directionDiff = Math.abs(this.d - targetDirection);
         if (directionDiff > 5) {
-            const turnSpeed = this.s > 1 ? Math.max(Math.min(this.turnSpeed, Math.abs(targetDirection - this.d), this.s / 2), 1) : this.turnSpeed;
+            const turnSpeed = this.s > 2 ? Math.max(Math.min(this.turnSpeed, Math.abs(targetDirection - this.d), this.s * 2 / 3), 1) : this.turnSpeed;
             const relativeDirectionDiff = GUt.relativeAngle(targetDirection - this.d);
             this.d += turnSpeed * (relativeDirectionDiff >= -5 ? 1 : -1);
             return false;

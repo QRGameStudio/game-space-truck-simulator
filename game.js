@@ -46,6 +46,8 @@ function start() {
 
     new GEOStation(GAME, 0, 0);
 
+    const radius = 100000;
+    const fields = 5;
     (() => {
         const dustCount = 100;
         GAME.onStep = () => {
@@ -56,6 +58,10 @@ function start() {
 
         for (let i = 0; i < dustCount / 2; i++) {
             new GEODust(GAME, true);
+        }
+
+        while (GEOAsteroidField.fields.length < fields) {
+            new GEOAsteroidField(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
         }
     })();
 
@@ -73,12 +79,6 @@ function start() {
         setTimeout(() => pointer.die(), 500);
         PLAYER.goto(x, y);
         GAME.canvas.focus();
-    }
-
-    const radius = 1000000;
-    const fields = 5;
-    for (let i = 0; i < fields; i++) {
-        new GEOAsteroidField(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
     }
 
     for (let i = 0; i < Math.max(Math.floor(fields / 10), 1); i++) {

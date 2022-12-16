@@ -15,14 +15,14 @@ class GEOPirate extends GEOShip {
          */
         this.target = null;
         this.wantedTargetDistance = 30;
-        this.maxTargetDistance = 40000;
+        this.maxTargetDistance = 20000;
         this.t = 'pirate';
 
-        this.maxSpeed = 50;
+        this.maxSpeed = 30;
         this.acceleration = 5;
         this.turnSpeed = 1;
 
-        this.__laserTimeout = 500;
+        this.__laserTimeout = 1500;
         this.__lasersTargets = ['p'];
     }
 
@@ -32,9 +32,7 @@ class GEOPirate extends GEOShip {
 
     step() {
         super.step();
-        console.log('Pirate', this.x, this.y, this.target, this.__autopilot);
-
-        if (this.target !== null && (this.target.is_dead || this.distanceFrom(this.target) > this.maxTargetDistance)) {
+        if (this.target !== null && (this.target.isDead || this.distanceFrom(this.target) > this.maxTargetDistance)) {
             this.__autopilot = null;
             this.target = null;
         }

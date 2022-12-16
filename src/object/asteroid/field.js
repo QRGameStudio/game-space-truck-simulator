@@ -18,7 +18,27 @@ class GEOAsteroidField extends GEO {
         GEOAsteroidField.fields.push({x: Math.floor(x), y: Math.floor(y)});
         GEOAsteroidField.guiRenderer.render();
         this.__field_radius = Math.random() * 1000;
-        this.generateAsteroids(Math.floor(Math.random() * this.__field_radius / 10));
+        /**
+         *
+         * @type {GEO[]}
+         */
+        this.asteroids = [];
+        this.asteroidsCount = Math.floor(Math.random() * this.__field_radius / 10);
+        this.generateAsteroids(this.asteroidsCount);
+    }
+
+    step() {
+        super.step();
+        this.asteroids = this.asteroids.filter((a) => !a.isDead);
+        if (this.asteroids.length < Math.max(3, 0.1 * this.asteroidsCount)) {
+
+        }
+    }
+
+    die() {
+        GEOAsteroidField.fields = GEOAsteroidField.fields.filter((p) => p.x !== Math.floor(this.x) || p.y !== Math.floor(this.y));
+        GEOAsteroidField.guiRenderer.render();
+        super.die();
     }
 
     /**
@@ -31,6 +51,7 @@ class GEOAsteroidField extends GEO {
             const y = this.y + 2 * Math.random() * this.__field_radius - this.__field_radius;
             const asteroid = createAsteroid(this.game, 30 + Math.random() * 75, x, y)
             asteroid.s = 0;
+            this.asteroids.push(asteroid);
         }
     }
 }

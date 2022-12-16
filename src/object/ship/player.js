@@ -136,7 +136,7 @@ class GEOPlayer extends GEOShip {
          */
         const nearestPirate = this.getNearest('pirate');
 
-        if (nearestPirate === undefined) {
+        if (nearestPirate === null) {
             this.__pirateAlertPlayed = false;
             return;
         }

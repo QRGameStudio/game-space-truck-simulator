@@ -33,7 +33,11 @@ function createLaser(game, player, isLeft, targets) {
         obj.die();
     }
 
-    obj.onscreenleft = () => obj.die();
+    obj.step = () => {
+      if (obj.distanceTo(PLAYER) > game.r * 4) {
+          obj.die();
+      }
+    };
 
     return obj;
 }

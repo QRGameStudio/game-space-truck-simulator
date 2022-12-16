@@ -103,7 +103,7 @@ class GEODrone extends GEOShip {
 
         super.step();
 
-        if (this.returnToOwner  || this.inventory.full || this.distanceFrom(this.owner) > this.maxOwnerDistance) {
+        if (this.returnToOwner || this.owner.inventory.full || this.inventory.full || this.distanceFrom(this.owner) > this.maxOwnerDistance) {
             this.returnToOwner = true;
             this.target = null;
 
@@ -116,7 +116,7 @@ class GEODrone extends GEOShip {
                 this.returnToOwner = false;
             }
         } else {
-            if (this.target !== null && (this.target.is_dead || this.distanceFrom(this.target) > this.maxTargetDistance)) {
+            if (this.target !== null && (this.target.isDead || this.distanceFrom(this.target) > this.maxTargetDistance)) {
                 this.target = null;
             }
 
