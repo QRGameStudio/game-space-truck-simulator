@@ -70,7 +70,7 @@ function start() {
     PLAYER = new GEOPlayer(GAME);
     GAME.cameraFollowObject = PLAYER;
 
-    const radius = 10000000;
+    const radius = 100000;
     const fields = 15;
     const stations = 5;
 
@@ -99,12 +99,20 @@ function start() {
     })();
 
     GAME.onKeyDown = (key) => {
-        if (key === " ") {
-            PLAYER.fireLasers();
-        }
-        if (key === "p") {
-            GAME.paused = true;
-            MODAL.alert('This game is paused', 'PAUSE').then(() => GAME.paused = false);
+        switch (key) {
+            case " ":
+                PLAYER.fireLasers();
+                break;
+            case "p":
+                GAME.paused = true;
+                MODAL.alert('This game is paused', 'PAUSE').then(() => GAME.paused = false);
+                break;
+            case "-":
+                GAME.zoom /= 1.1;
+                break;
+            case "+":
+                GAME.zoom *= 1.1;
+                break;
         }
     }
     GAME.onClick = (x, y) => {
@@ -147,7 +155,7 @@ function start() {
         }, functions)
     }
 
-    for (let i = 0; i < Math.max(Math.floor(fields * 5), 1); i++) {
+    for (let i = 0; i < Math.max(Math.floor(radius / 10000), 1); i++) {
         const pirate = new GEOPirate(GAME);
         pirate.x = Math.random() * radius * 2 - radius;
         pirate.y = Math.random() * radius * 2 - radius;

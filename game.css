@@ -19,29 +19,91 @@ body, #game-layer {
 }
 
 #game-canvas {
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
     margin: 0;
     padding: 0;
+}
+
+.alert {
+    font-size: 20px;
+}
+
+.alert > .green {
+    color: darkgreen;
+    border: 2px dotted darkgreen;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.alert > .red {
+    color: darkred;
+    border: 2px dashed darkred;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px;
+    animation-name: blink;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes blink {
+    0% {
+        filter: brightness(1);
+    }
+
+    33% {
+        filter: brightness(1.5);
+    }
+
+    66% {
+        filter: brightness(0.5);
+    }
+}
+
+.autopilot {
+    margin-bottom: 0.75em;
 }
 
 .controls-c {
     opacity: 0.5;
     position: fixed;
     bottom: 1em;
-    width: 100%;
+    width: calc(100% - 10ex);
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    margin: 0 5ex;
     align-items: flex-end;
     color: white;
+    font-family: monospace;
+    font-size: 17px;
 }
 
 .controls-c > *:not(:last-child) {
     margin-right: 1em;
 }
 
+.controls-c > .position {
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-around;
+    align-items: flex-end;
+}
+
+
 .inventory {
     color: white;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.buttons>*:not(:last-child) {
+    margin-bottom: 0.2em;
 }
 
 .map-btn {

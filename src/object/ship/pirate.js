@@ -21,6 +21,7 @@ class GEOPirate extends GEOShip {
         this.maxSpeed = 30;
         this.acceleration = 5;
         this.turnSpeed = 1;
+        this.health = 20;
 
         this.__laserTimeout = 1500;
         this.__lasersTargets = ['p'];

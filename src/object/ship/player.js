@@ -82,6 +82,7 @@ class GEOPlayer extends GEOShip {
         this.drone = new GEODrone(this.game, this);
 
         this.rendererDrone = new GRenderer($('.drone'));
+        this.rendererAlert = new GRenderer($('.alert'), {alert: false});
         this.__renderDrone();
         this.rendererPosition = new GRenderer($('.position'),
             {system: '', x: 0, y: 0, inventory: {sum: 0, capacity: 0},
@@ -135,6 +136,7 @@ class GEOPlayer extends GEOShip {
         this.rendererPosition.variables.x = Math.floor(this.x);
         this.rendererPosition.variables.y = Math.floor(this.y);
         this.rendererPosition.variables.s = Math.round(this.s);
+        this.rendererPosition.variables.maxSpeed = Math.round(this.maxSpeed);
 
         this.rendererPosition.variables.inventory.sum = this.inventory.sum();
         this.rendererPosition.variables.inventory.capacity = this.inventory.size;
@@ -171,10 +173,14 @@ class GEOPlayer extends GEOShip {
 
         const distance = this.distanceFrom(nearestPirate);
         const secondsToArrival = distance / (nearestPirate.s * this.game.fps);
-        if (secondsToArrival > 10 || nearestPirate.target !== this) {
+        if ((secondsToArrival > 10 && distance > this.game.r) || nearestPirate.target !== this) {
             this.__pirateAlertPlayed = false;
+            this.rendererAlert.variables.alert = this.__pirateAlertPlayed;
+            this.rendererAlert.render();
         } else if (!this.__pirateAlertPlayed) {
             this.__pirateAlertPlayed = true;
+            this.rendererAlert.variables.alert = this.__pirateAlertPlayed;
+            this.rendererAlert.render();
             MUSIC.play('alert');
         }
     }
@@ -182,7 +188,7 @@ class GEOPlayer extends GEOShip {
     __playCargoFullAlert() {
         if (this.inventory.full && !this.__cargoFullAlertPlayed) {
             this.__cargoFullAlertPlayed = true;
-            MUSIC.play('cargoFull');
+            MUSIC.play('cargoFull', 0, 30);
         } else if (!this.inventory.full && this.__cargoFullAlertPlayed) {
             this.__cargoFullAlertPlayed = false;
         }
@@ -191,7 +197,7 @@ class GEOPlayer extends GEOShip {
     __playDroneIdleAlert() {
         if (this.drone.idle && !this.__droneIdleAlertPlayed) {
             this.__droneIdleAlertPlayed = true;
-            MUSIC.play('cargoFull');
+            MUSIC.play('cargoFull', 0, 30);
         } else if (!this.drone.idle && this.__droneIdleAlertPlayed) {
             this.__droneIdleAlertPlayed = false;
         }
@@ -240,7 +246,7 @@ class GEOPlayer extends GEOShip {
 
         const volume = this.s < 1 ? 0 : 5 + 30 * (this.s / this.maxSpeed);
 
-        MUSIC.play(sound, 1, volume).then(() => this.__playEnginesHumm());
+        MUSIC.play(sound, 0, volume).then(() => this.__playEnginesHumm());
     }
 }
 
