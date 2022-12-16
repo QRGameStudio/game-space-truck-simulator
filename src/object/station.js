@@ -4,12 +4,6 @@ class GEOStation extends GEO {
      * @type {(GPoint & {name: string})[]}
      */
     static stations = [];
-    static guiRenderer = new GRenderer(
-        $('.space-stations'),
-        {stations: GEOStation.stations},
-        {},
-        {gotoObject: (point) => PLAYER.goto(point.x, point.y, 200)}
-    );
 
     static t = 'space-station';
 
@@ -29,7 +23,6 @@ class GEOStation extends GEO {
         this.name = randomName(5, 10) + ' station';
 
         GEOStation.stations.push({x: this.x, y: this.y, name: this.name});
-        GEOStation.guiRenderer.render();
     }
 
     step() {

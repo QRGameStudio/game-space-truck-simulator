@@ -109,12 +109,11 @@ class GEOPlayer extends GEOShip {
         this.__playCargoFullAlert();
         this.__playDroneIdleAlert();
 
-        const orientationPointTypes = new Set([GEOStation.t, GEOAsteroidField.t]);
         /**
          * @type {GEOStation|GEOAsteroidField|null}
          */
-        const nearestOrientationPoint = this.getNearest(orientationPointTypes);
-        this.rendererPosition.variables.system = nearestOrientationPoint !== null ? nearestOrientationPoint.name : 'Unknown';
+        const nearestOrientationPoint = this.getNearest(NAVIGABLE_TYPES, 20000);  // 20 km
+        this.rendererPosition.variables.system = nearestOrientationPoint !== null ? nearestOrientationPoint.name : 'Empty space';
         this.rendererPosition.variables.x = Math.floor(this.x);
         this.rendererPosition.variables.y = Math.floor(this.y);
         this.rendererPosition.variables.s = Math.round(this.s);
@@ -124,7 +123,7 @@ class GEOPlayer extends GEOShip {
         this.rendererPosition.variables.health = Math.ceil(this.health);
 
         if (this.__autopilot !== null) {
-            const nearestAutopilotSystem = this.game.getNearest(this.__autopilot, orientationPointTypes, null, 1);
+            const nearestAutopilotSystem = this.game.getNearest(this.__autopilot, NAVIGABLE_TYPES, null, 1);
 
             this.rendererPosition.variables.autopilot = {
                 time: Math.floor(this.distanceTo(this.__autopilot) / (this.s * this.game.fps)),

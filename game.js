@@ -17,6 +17,15 @@ const MUSIC = new GSongLib();
  */
 const SCORE = new GScore();
 
+/**
+ *
+ * @type {GModal}
+ */
+const MODAL = new GModal();
+
+
+const NAVIGABLE_TYPES = new Set([GEOStation.t, GEOAsteroidField.t]);
+
 /** @type {GEG} */
 let GAME;
 
@@ -98,7 +107,34 @@ function start() {
         GAME.canvas.focus();
     }
 
-    for (let i = 0; i < Math.max(Math.floor(fields / 10), 1); i++) {
+    // noinspection JSUnusedGlobalSymbols
+    $('#btnMap').onclick = () => {
+
+        const fields = GAME
+            .getNearest(PLAYER, NAVIGABLE_TYPES)
+            .map((obj) => {
+                const distance = GAME.distanceBetween(PLAYER, obj); // meters
+                return {
+                    x: obj.x,
+                    y: obj.y,
+                    name: obj?.name,
+                    distance: `${Math.round(distance) / 1000} km`
+                }
+            });
+
+        const functions = {
+            gotoObject: (point) => {
+                PLAYER.goto(point.x, point.y, 200);
+                functions.hideModal();
+            }
+        }
+
+        MODAL.show('targetSelection', {
+            fields
+        }, functions)
+    }
+
+    for (let i = 0; i < Math.max(Math.floor(fields / 2), 1); i++) {
         const pirate = new GEOPirate(GAME);
         pirate.x = Math.random() * radius * 2 - radius;
         pirate.y = Math.random() * radius * 2 - radius;

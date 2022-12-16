@@ -16,17 +16,6 @@
 <div id="game-layer">
     <canvas id="game-canvas" width="500" height="500" autofocus></canvas>
     <div class="controls-c">
-        <div class="buttons">
-            <div class="drone">
-                <button r-if="v.docked" r-click="f.launch()">Launch drone</button>
-                <button r-if="!v.docked && v.inRange" r-click="f.dock()">
-                    Dock drone
-                </button>
-                <button r-if="!v.docked && !v.inRange" r-click="f.recall()">
-                    Recall drone
-                </button>
-            </div>
-        </div>
         <div class="position">
             <div r-if="v.autopilot">
                 <ul>
@@ -50,22 +39,44 @@
                 </ul>
             </div>
         </div>
-        <div class="space-stations">
-            <div r-for="field of v.stations">
-                <button r-click="f.gotoObject(l.field)">
-                    <span r-var="l.field.name"></span> (<span r-var="l.field.x"></span> X <span r-var="l.field.y"></span>)
+        <div class="buttons">
+            <button id="btnMap">Open map</button>
+            <div class="drone">
+                <button r-if="v.docked" r-click="f.launch()">Launch drone</button>
+                <button r-if="!v.docked && v.inRange" r-click="f.dock()">
+                    Dock drone
                 </button>
-            </div>
-        </div>
-        <div class="asteroid-fields">
-            <div r-for="field of v.fields">
-                <button r-click="f.gotoObject(l.field)">
-                    <span r-var="l.field.name"></span> (<span r-var="l.field.x"></span> X <span r-var="l.field.y"></span>)
+                <button r-if="!v.docked && !v.inRange" r-click="f.recall()">
+                    Recall drone
                 </button>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal target selection -->
+<div id="modal-targetSelection" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Where to go?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <li r-for="field of v.fields">
+                        <button r-click="f.gotoObject(l.field)">
+                            <span r-var="l.field.name"></span> (<span r-var="l.field.distance"></span>)
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 </body>
 </html>

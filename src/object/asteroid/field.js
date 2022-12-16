@@ -4,12 +4,6 @@ class GEOAsteroidField extends GEO {
      * @type {(GPoint & {id: number, name: string})[]}
      */
     static fields = [];
-    static guiRenderer = new GRenderer(
-        $('.asteroid-fields'),
-        {fields: GEOAsteroidField.fields},
-        {},
-        {gotoObject: (point) => { PLAYER.goto(point.x, point.y); GAME.canvas.focus(); }}
-    );
 
     static t = 'asteroid-field';
 
@@ -21,7 +15,6 @@ class GEOAsteroidField extends GEO {
         this.name = randomName(5, 10) + ' field';
 
         GEOAsteroidField.fields.push({x: Math.floor(x), y: Math.floor(y), id: this.id, name: this.name});
-        GEOAsteroidField.guiRenderer.render();
         this.__field_radius = Math.random() * 1000;
         /**
          *
@@ -46,7 +39,6 @@ class GEOAsteroidField extends GEO {
         const index = GEOAsteroidField.fields.findIndex((x) => x.id === this.id);
         if (index > -1) {
             GEOAsteroidField.fields.splice(index, 1);
-            GEOAsteroidField.guiRenderer.render();
         }
         super.die();
     }
