@@ -80,7 +80,7 @@ class GEOPlayer extends GEOShip {
         this.rendererDrone = new GRenderer($('.drone'));
         this.__renderDrone();
         this.rendererPosition = new GRenderer($('.position'),
-            {x: 0, y: 0, asteroidFields: GEOAsteroidField.fields, inventory: {sum: 0, capacity: 0},
+            {system: '', x: 0, y: 0, inventory: {sum: 0, capacity: 0},
             drone: false});
 
         this.__playEnginesHumm();
@@ -109,6 +109,12 @@ class GEOPlayer extends GEOShip {
         this.__playCargoFullAlert();
         this.__playDroneIdleAlert();
 
+        const orientationPointTypes = new Set([GEOStation.t, GEOAsteroidField.t]);
+        /**
+         * @type {GEOStation|GEOAsteroidField|null}
+         */
+        const nearestOrientationPoint = this.getNearest(orientationPointTypes);
+        this.rendererPosition.variables.system = nearestOrientationPoint !== null ? nearestOrientationPoint.name : 'Unknown';
         this.rendererPosition.variables.x = Math.floor(this.x);
         this.rendererPosition.variables.y = Math.floor(this.y);
         this.rendererPosition.variables.s = Math.round(this.s);
@@ -118,8 +124,13 @@ class GEOPlayer extends GEOShip {
         this.rendererPosition.variables.health = Math.ceil(this.health);
 
         if (this.__autopilot !== null) {
+            const nearestAutopilotSystem = this.game.getNearest(this.__autopilot, orientationPointTypes, null, 1);
+
             this.rendererPosition.variables.autopilot = {
-                time: Math.floor(this.distanceTo(this.__autopilot) / (this.s * this.game.fps))
+                time: Math.floor(this.distanceTo(this.__autopilot) / (this.s * this.game.fps)),
+                x: Math.floor(this.__autopilot.x),
+                y: Math.floor(this.__autopilot.y),
+                system: nearestAutopilotSystem[0]?.name || 'Unknown'
             }
         } else {
             this.rendererPosition.variables.autopilot = null;
@@ -210,7 +221,7 @@ class GEOPlayer extends GEOShip {
             sound = 'humm2';
         }
 
-        const volume = this.s < 1 ? 0 : 5 + 50 * (this.s / this.maxSpeed);
+        const volume = this.s < 1 ? 0 : 5 + 30 * (this.s / this.maxSpeed);
 
         MUSIC.play(sound, 1, volume).then(() => this.__playEnginesHumm());
     }

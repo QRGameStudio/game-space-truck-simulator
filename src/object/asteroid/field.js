@@ -1,7 +1,7 @@
 class GEOAsteroidField extends GEO {
     /**
      *
-     * @type {GPoint[]}
+     * @type {(GPoint & {id: number, name: string})[]}
      */
     static fields = [];
     static guiRenderer = new GRenderer(
@@ -11,11 +11,16 @@ class GEOAsteroidField extends GEO {
         {gotoObject: (point) => { PLAYER.goto(point.x, point.y); GAME.canvas.focus(); }}
     );
 
+    static t = 'asteroid-field';
+
     constructor(game, x, y) {
         super(game);
         this.x = x;
         this.y = y;
-        GEOAsteroidField.fields.push({x: Math.floor(x), y: Math.floor(y)});
+        this.t = GEOAsteroidField.t;
+        this.name = randomName(5, 10) + ' field';
+
+        GEOAsteroidField.fields.push({x: Math.floor(x), y: Math.floor(y), id: this.id, name: this.name});
         GEOAsteroidField.guiRenderer.render();
         this.__field_radius = Math.random() * 1000;
         /**
@@ -23,21 +28,26 @@ class GEOAsteroidField extends GEO {
          * @type {GEO[]}
          */
         this.asteroids = [];
-        this.asteroidsCount = Math.floor(Math.random() * this.__field_radius / 10);
+        this.minAsteroids = 3;
+        this.asteroidsCount = this.minAsteroids + Math.floor(Math.random() * this.__field_radius / 10);
         this.generateAsteroids(this.asteroidsCount);
     }
 
     step() {
         super.step();
         this.asteroids = this.asteroids.filter((a) => !a.isDead);
-        if (this.asteroids.length < Math.max(3, 0.1 * this.asteroidsCount)) {
-
+        if (this.asteroids.length < Math.max(this.minAsteroids, 0.1 * this.asteroidsCount)) {
+            console.log('field die');
+            this.die();
         }
     }
 
     die() {
-        GEOAsteroidField.fields = GEOAsteroidField.fields.filter((p) => p.x !== Math.floor(this.x) || p.y !== Math.floor(this.y));
-        GEOAsteroidField.guiRenderer.render();
+        const index = GEOAsteroidField.fields.findIndex((x) => x.id === this.id);
+        if (index > -1) {
+            GEOAsteroidField.fields.splice(index, 1);
+            GEOAsteroidField.guiRenderer.render();
+        }
         super.die();
     }
 

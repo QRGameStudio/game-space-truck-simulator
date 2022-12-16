@@ -30,6 +30,23 @@ function initMusic() {
     MUSIC.cache['cargoFull'] = [[["A3"],200],[["B3"],200],[["C4"],200],[["D4"],500],[[],500]];
 }
 
+function randomName(lengthMin, lengthMax) {
+    const chars = lengthMin + Math.floor(Math.random() * (lengthMax - lengthMin));
+    let name = '';
+
+    const charlist = ['mnvcxlkjhgfdspztrwq', 'euioa'];
+    for (let i = 0; i < chars; i++) {
+        const list = charlist[i % 2];
+        let char = list[Math.floor(Math.random() * list.length)];
+        if (i === 0) {
+            char = char.toUpperCase();
+        }
+        name += char;
+    }
+
+    return name;
+}
+
 function start() {
     // noinspection JSValidateTypes
     /**
@@ -46,7 +63,7 @@ function start() {
 
     new GEOStation(GAME, 0, 0);
 
-    const radius = 100000;
+    const radius = 1000000;
     const fields = 5;
     (() => {
         const dustCount = 100;
@@ -54,14 +71,14 @@ function start() {
             if (GEODust.count < dustCount * Math.log2(Math.abs(PLAYER.s) + 1)) {
                 new GEODust(GAME);
             }
+
+            while (GEOAsteroidField.fields.length < fields) {
+                new GEOAsteroidField(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
+            }
         };
 
         for (let i = 0; i < dustCount / 2; i++) {
             new GEODust(GAME, true);
-        }
-
-        while (GEOAsteroidField.fields.length < fields) {
-            new GEOAsteroidField(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
         }
     })();
 
