@@ -70,10 +70,10 @@ function start() {
     PLAYER = new GEOPlayer(GAME);
     GAME.cameraFollowObject = PLAYER;
 
-    new GEOStation(GAME, 0, 0);
+    const radius = 10000000;
+    const fields = 15;
+    const stations = 5;
 
-    const radius = 1000000;
-    const fields = 5;
     (() => {
         const dustCount = 100;
         GAME.onStep = () => {
@@ -89,6 +89,13 @@ function start() {
         for (let i = 0; i < dustCount / 2; i++) {
             new GEODust(GAME, true);
         }
+
+        for (let i = 0; i < stations; i++) {
+            new GEOStation(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
+        }
+        const randomStation = GEOStation.stations[Math.floor(GEOStation.stations.length * Math.random())];
+        PLAYER.x = randomStation.x;
+        PLAYER.y = randomStation.y;
     })();
 
     GAME.onKeyDown = (key) => {
