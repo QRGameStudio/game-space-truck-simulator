@@ -7,6 +7,8 @@ class GEOStation extends GEO {
 
     static t = 'space-station';
 
+    static icon = GUt.ud('8J+PsA==');
+
     /**
      *
      * @param game {GEG}
@@ -20,6 +22,7 @@ class GEOStation extends GEO {
         this.t = GEOStation.t;
         this.w = this.h = 120;
         this.__spin_speed = 1;
+        this.icon = GEOStation.icon;
         this.name = randomName(5, 10) + ' station';
 
         GEOStation.stations.push({x: this.x, y: this.y, name: this.name});

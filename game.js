@@ -118,7 +118,8 @@ function start() {
                     x: obj.x,
                     y: obj.y,
                     name: obj?.name,
-                    distance: `${Math.round(distance) / 1000} km`
+                    distance: `${Math.round(distance) / 1000} km`,
+                    icon: obj?.icon
                 }
             });
 
@@ -134,7 +135,7 @@ function start() {
         }, functions)
     }
 
-    for (let i = 0; i < Math.max(Math.floor(fields / 2), 1); i++) {
+    for (let i = 0; i < Math.max(Math.floor(fields / 1), 1); i++) {
         const pirate = new GEOPirate(GAME);
         pirate.x = Math.random() * radius * 2 - radius;
         pirate.y = Math.random() * radius * 2 - radius;

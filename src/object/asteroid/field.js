@@ -7,11 +7,14 @@ class GEOAsteroidField extends GEO {
 
     static t = 'asteroid-field';
 
+    static icon = GUt.ud('8J+qqA==');
+
     constructor(game, x, y) {
         super(game);
         this.x = x;
         this.y = y;
         this.t = GEOAsteroidField.t;
+        this.icon = GEOAsteroidField.icon;
         this.name = randomName(5, 10) + ' field';
 
         GEOAsteroidField.fields.push({x: Math.floor(x), y: Math.floor(y), id: this.id, name: this.name});
