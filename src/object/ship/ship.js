@@ -70,6 +70,11 @@ class GEOShip extends GEO {
 
     step() {
         super.step();
+
+        if (this.health <= 0) {
+            this.die();
+        }
+
         if (this.__autopilot !== null) {
             const speedDownStepsLeft = this.s / this.speedAccelerationPerStep;
             const distanceLeft = this.distanceTo(this.__autopilot) - this.__autopilot.accuracy;
@@ -91,6 +96,11 @@ class GEOShip extends GEO {
                 this.__autopilot = null;
             }
         }
+    }
+
+    die() {
+        super.die();
+        new GEOExplosion(GAME, this.x, this.y);
     }
 
     /**

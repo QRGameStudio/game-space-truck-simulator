@@ -3,4 +3,5 @@
 // !G.import('laser.js')
 // !G.import('ingot.js')
 // !G.import('dust.js')
+// !G.import('explosion.js')
 // !G.import('ship/index.js')

@@ -49,6 +49,10 @@ class Inventory {
         return this.__content.get(item) || 0;
     }
 
+    clear() {
+        this.__content.clear();
+    }
+
     /**
      *
      * @return {string[]}
@@ -87,6 +91,20 @@ class GEOPlayer extends GEOShip {
         this.__pirateAlertPlayed = false;
         this.__cargoFullAlertPlayed = false;
         this.__droneIdleAlertPlayed = false;
+    }
+
+    die() {
+        const nearestBase = this.getNearest(GEOStation.t);
+        this.x = nearestBase.cx;
+        this.y = nearestBase.cy;
+        this.s = 0;
+        this.health = 100;
+        this.inventory.clear();
+        this.game.paused = true;
+
+        SCORE.set(SCORE.get() / 2).then();
+        MODAL.alert('Your escape module has arrived to the nearest base', 'Your ship has been destroyed')
+            .then(() => this.game.paused = false);
     }
 
     step() {

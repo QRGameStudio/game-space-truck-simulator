@@ -95,6 +95,10 @@ function start() {
         if (key === " ") {
             PLAYER.fireLasers();
         }
+        if (key === "p") {
+            GAME.paused = true;
+            MODAL.alert('This game is paused', 'PAUSE').then(() => GAME.paused = false);
+        }
     }
     GAME.onClick = (x, y) => {
         const pointer = GAME.createObject(x, y);
@@ -103,6 +107,7 @@ function start() {
             ctx.fillRect(pointer.x - 2, pointer.y - 2, 4, 4);
         }
         setTimeout(() => pointer.die(), 500);
+
         PLAYER.goto(x, y);
         GAME.canvas.focus();
     }
@@ -135,7 +140,7 @@ function start() {
         }, functions)
     }
 
-    for (let i = 0; i < Math.max(Math.floor(fields / 1), 1); i++) {
+    for (let i = 0; i < Math.max(Math.floor(fields * 5), 1); i++) {
         const pirate = new GEOPirate(GAME);
         pirate.x = Math.random() * radius * 2 - radius;
         pirate.y = Math.random() * radius * 2 - radius;
