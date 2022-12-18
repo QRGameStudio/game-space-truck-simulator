@@ -1,4 +1,4 @@
-class GEOAsteroidField extends GEO {
+class GEOAsteroidField extends GEOSavable {
     /**
      *
      * @type {(GPoint & {id: number, name: string})[]}

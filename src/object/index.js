@@ -1,3 +1,4 @@
+// !G.import('savable.js')
 // !G.import('station.js')
 // !G.import('asteroid/index.js')
 // !G.import('laser.js')

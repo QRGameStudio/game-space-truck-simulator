@@ -1,4 +1,4 @@
-class GEOStation extends GEO {
+class GEOStation extends GEOSavable {
     /**
      *
      * @type {(GPoint & {name: string})[]}

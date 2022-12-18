@@ -7,7 +7,7 @@
  * }} GEOShipAutopilot
  */
 
-class GEOShip extends GEO {
+class GEOShip extends GEOSavable {
     /**
      *
      * @param game {GEG}
@@ -189,5 +189,106 @@ class GEOShip extends GEO {
         setTimeout(() => this.__canFireLasers = true, this.__laserTimeout);
         createLaser(this.game, this, true, this.__lasersTargets).s += this.s;
         createLaser(this.game, this, false, this.__lasersTargets).s += this.s;
+    }
+
+    saveDict() {
+        const data = super.saveDict();
+        data.autopilot = this.__autopilot;
+        data.inventory = this.inventory.stringify();
+    }
+
+    loadDict(data) {
+        super.loadDict(data);
+        this.__autopilot = data.autopilot;
+        this.inventory.parse(data.inventory);
+    }
+}
+
+class Inventory {
+    /**
+     *
+     * @param size {number}
+     */
+    constructor(size) {
+        /** @type {Map<string, number>} */
+        this.__content = new Map();
+        this.size = size;
+    }
+
+    /**
+     *
+     * @return {boolean}
+     */
+    get full() {
+        return this.sum() >= this.size;
+    }
+
+    /**
+     *
+     * @param item {string}
+     * @param count {number}
+     */
+    set(item, count) {
+        this.__content.set(item, count);
+    }
+
+    /**
+     *
+     * @param item {string}
+     * @param count {number}
+     * @return {boolean}
+     */
+    add(item, count) {
+        if (this.sum() + count  > this.size) {
+            return false;
+        }
+        this.set(item, this.get(item) + count);
+        return true;
+    }
+
+    /**
+     *
+     * @param item {string}
+     * @return {number}
+     */
+    get(item) {
+        return this.__content.get(item) || 0;
+    }
+
+    clear() {
+        this.__content.clear();
+    }
+
+    /**
+     *
+     * @return {string[]}
+     */
+    keys() {
+        return [...this.__content.keys()];
+    }
+
+    // noinspection JSUnusedGlobalSymbols
+    /**
+     *
+     * @return {number}
+     */
+    sum() {
+        return [...this.__content.values()].reduce((a, b) => a + b, 0);
+    }
+
+    /**
+     *
+     * @return {string}
+     */
+    stringify() {
+        return JSON.stringify([...this.__content.entries()]);
+    }
+
+    /**
+     *
+     * @param data {string}
+     */
+    parse(data) {
+        this.__content = new Map(JSON.parse(data));
     }
 }
