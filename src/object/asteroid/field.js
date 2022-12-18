@@ -5,6 +5,11 @@ class GEOAsteroidField extends GEO {
      */
     static fields = [];
 
+    /**
+     * @type {Set<GPoint>}
+     */
+    static depleted = new Set();
+
     static t = 'asteroid-field';
 
     static icon = GUt.ud('8J+qqA==');
@@ -15,6 +20,7 @@ class GEOAsteroidField extends GEO {
         this.y = y;
         this.t = GEOAsteroidField.t;
         this.icon = GEOAsteroidField.icon;
+        this.depleted = false;
         this.name = randomName(5, 10) + ' field';
 
         GEOAsteroidField.fields.push({x: Math.floor(x), y: Math.floor(y), id: this.id, name: this.name});
@@ -33,15 +39,15 @@ class GEOAsteroidField extends GEO {
         super.step();
         this.asteroids = this.asteroids.filter((a) => !a.isDead);
         if (this.asteroids.length < Math.max(this.minAsteroids, 0.1 * this.asteroidsCount)) {
-            console.log('field die');
             this.die();
         }
     }
 
     die() {
+        this.depleted = true;
         const index = GEOAsteroidField.fields.findIndex((x) => x.id === this.id);
         if (index > -1) {
-            GEOAsteroidField.fields.splice(index, 1);
+            GEOAsteroidField.depleted.add(GEOAsteroidField.fields.splice(index, 1)[0]);
         }
         super.die();
     }

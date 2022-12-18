@@ -56,6 +56,26 @@ function randomName(lengthMin, lengthMax) {
     return name;
 }
 
+/**
+ *
+ * @template T
+ * @param items {{item: T, weight: number}[]}
+ * @return T
+ */
+function weightedRandomChoice(items) {
+    items.sort((a, b) => a.weight - b.weight);
+    const weightSumMax = items.map((x) => x.weight).reduce((a, b) => a + b, 0);
+    const randomWeight = weightSumMax * Math.random();
+
+    let weightSum = 0;
+    for (const item of items) {
+        weightSum += item.weight;
+        if (weightSum >= randomWeight) {
+            return item.item;
+        }
+    }
+}
+
 function start() {
     // noinspection JSValidateTypes
     /**
@@ -70,7 +90,7 @@ function start() {
     PLAYER = new GEOPlayer(GAME);
     GAME.cameraFollowObject = PLAYER;
 
-    const radius = 100000;
+    const radius = 10000000;
     const fields = 15;
     const stations = 5;
 
@@ -81,8 +101,8 @@ function start() {
                 new GEODust(GAME);
             }
 
-            while (GEOAsteroidField.fields.length < fields) {
-                new GEOAsteroidField(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
+            while (PLAYER.getNearests(GEOAsteroidField.t, radius * 2).length < fields) {
+                new GEOAsteroidField(GAME, PLAYER.x + Math.random() * radius * 2 - radius, PLAYER.y + Math.random() * radius * 2 - radius);
             }
         };
 
@@ -127,9 +147,10 @@ function start() {
         GAME.canvas.focus();
     }
 
-    // noinspection JSUnusedGlobalSymbols
-    $('#btnMap').onclick = () => {
 
+    const btnMap = $('#btnMap');
+    new GRenderer(btnMap).render();  // render icon
+    btnMap.onclick = () => {
         const fields = GAME
             .getNearest(PLAYER, NAVIGABLE_TYPES)
             .map((obj) => {
@@ -143,6 +164,7 @@ function start() {
                 }
             });
 
+        // noinspection JSUnusedGlobalSymbols
         const functions = {
             gotoObject: (point) => {
                 PLAYER.goto(point.x, point.y, 200);
@@ -155,7 +177,7 @@ function start() {
         }, functions)
     }
 
-    for (let i = 0; i < Math.max(Math.floor(radius / 10000), 1); i++) {
+    for (let i = 0; i < Math.max(Math.floor(radius / 100000), 1); i++) {
         const pirate = new GEOPirate(GAME);
         pirate.x = Math.random() * radius * 2 - radius;
         pirate.y = Math.random() * radius * 2 - radius;

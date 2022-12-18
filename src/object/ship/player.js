@@ -171,9 +171,7 @@ class GEOPlayer extends GEOShip {
             return;
         }
 
-        const distance = this.distanceFrom(nearestPirate);
-        const secondsToArrival = distance / (nearestPirate.s * this.game.fps);
-        if ((secondsToArrival > 10 && distance > this.game.r) || nearestPirate.target !== this) {
+        if (nearestPirate.target !== this) {
             this.__pirateAlertPlayed = false;
             this.rendererAlert.variables.alert = this.__pirateAlertPlayed;
             this.rendererAlert.render();
