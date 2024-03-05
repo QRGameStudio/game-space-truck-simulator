@@ -12,16 +12,19 @@ let PLAYER;
 const MUSIC = new GSongLib();
 
 /**
- *
  * @type {GScore}
  */
 const SCORE = new GScore();
 
 /**
- *
  * @type {GModal}
  */
 const MODAL = new GModal();
+
+/**
+ * @type {GStorage}
+ */
+const STORAGE = new GStorage("space-truck-simulator");
 
 
 const NAVIGABLE_TYPES = new Set([GEOStation.t, GEOAsteroidField.t]);
@@ -76,7 +79,43 @@ function weightedRandomChoice(items) {
     }
 }
 
-function start() {
+async function saveGame() {
+    /**
+     * @param type {string}
+     * @return {{[key: string]: any}[]}
+     */
+    function saveDictBulkForType(type) {
+        const data = [];
+        for (const obj of GAME.objectsOfTypes(new Set([type]))) {
+            // noinspection JSUnresolvedReference
+            data.push(obj.saveDict())
+        }
+        return data;
+    }
+
+    await STORAGE.set('save', {
+        player: PLAYER.saveDict(),
+        stations: saveDictBulkForType('space-station'),
+        pirates: saveDictBulkForType('pirate'),
+        score: SCORE.get()
+    });
+}
+
+
+async function loadGame() {
+    const saveData = await STORAGE.get('save');
+    if (!saveData) {
+        return false;
+    }
+    PLAYER.loadDict(saveData.player);
+    saveData.stations.map(x => new GEOStation(GAME, 0, 0).loadDict(x));
+    saveData.pirates.map(x => new GEOPirate(GAME).loadDict(x));
+    await SCORE.set(saveData.score);
+    return true;
+}
+
+
+async function start() {
     // noinspection JSValidateTypes
     /**
      * @type {HTMLCanvasElement}
@@ -89,6 +128,8 @@ function start() {
 
     PLAYER = new GEOPlayer(GAME);
     GAME.cameraFollowObject = PLAYER;
+
+    const initialGameSaved = await loadGame();
 
     const radius = 10000000;
     const fields = 15;
@@ -109,14 +150,23 @@ function start() {
         for (let i = 0; i < dustCount / 2; i++) {
             new GEODust(GAME, true);
         }
+    })();
 
+    if (!initialGameSaved) {
         for (let i = 0; i < stations; i++) {
             new GEOStation(GAME, Math.random() * radius * 2 - radius, Math.random() * radius * 2 - radius);
         }
+
         const randomStation = GEOStation.stations[Math.floor(GEOStation.stations.length * Math.random())];
         PLAYER.x = randomStation.x;
         PLAYER.y = randomStation.y;
-    })();
+
+        for (let i = 0; i < Math.max(Math.floor(radius / 100000), 1); i++) {
+            const pirate = new GEOPirate(GAME);
+            pirate.x = Math.random() * radius * 2 - radius;
+            pirate.y = Math.random() * radius * 2 - radius;
+        }
+    }
 
     GAME.onKeyDown = (key) => {
         switch (key) {
@@ -127,6 +177,12 @@ function start() {
                 GAME.paused = true;
                 MODAL.alert('This game is paused', 'PAUSE').then(() => GAME.paused = false);
                 break;
+            case "o":
+                GAME.paused = true;
+                saveGame()
+                    .then(() => MODAL.alert('The game was saved', 'SAVED'))
+                    .then(() => GAME.paused = false);
+                break;
             case "-":
                 GAME.zoom /= 1.1;
                 break;
@@ -135,6 +191,7 @@ function start() {
                 break;
         }
     }
+
     GAME.onClick = (x, y) => {
         const pointer = GAME.createObject(x, y);
         pointer.draw = (ctx) => {
@@ -177,14 +234,9 @@ function start() {
         }, functions)
     }
 
-    for (let i = 0; i < Math.max(Math.floor(radius / 100000), 1); i++) {
-        const pirate = new GEOPirate(GAME);
-        pirate.x = Math.random() * radius * 2 - radius;
-        pirate.y = Math.random() * radius * 2 - radius;
-    }
-
+    setInterval(() => saveGame(), 1000);
     initMusic();
     GAME.run();
 }
 
-start();
+(async () => await start())();

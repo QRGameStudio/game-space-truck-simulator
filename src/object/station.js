@@ -46,4 +46,16 @@ class GEOStation extends GEOSavable {
         ctx.lineWidth = 7;
         ctx.strokeRect(this.x - this.wh, this.y - this.hh, this.w, this.h);
     }
+
+    saveDict() {
+        return {
+            ...super.saveDict(),
+            name: this.name
+        };
+    }
+
+    loadDict(data) {
+        this.name = data.name;
+        super.loadDict(data);
+    }
 }
