@@ -1,4 +1,5 @@
 class GEOPirate extends GEOShip {
+    static t = 'pirate';
     /**
      *
      * @param game {GEG}
@@ -16,7 +17,7 @@ class GEOPirate extends GEOShip {
         this.target = null;
         this.wantedTargetDistance = 30;
         this.maxTargetDistance = 20000;
-        this.t = 'pirate';
+        this.t = GEOPirate.t;
 
         this.maxSpeed = 30;
         this.acceleration = 5;

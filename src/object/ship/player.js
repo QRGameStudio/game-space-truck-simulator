@@ -162,13 +162,13 @@ class GEOPlayer extends GEOShip {
         let sound;
         if (this.s < 30) {
             sound = 'humm0';
-        } else if (this.s < 100) {
+        } else if (this.s < 310) {
             sound = 'humm1';
         } else {
             sound = 'humm2';
         }
 
-        const volume = this.s < 1 ? 0 : 5 + 30 * (this.s / this.maxSpeed);
+        const volume = this.s < 1 ? 0 : 5 + 20 * (this.s / this.maxSpeed);
 
         MUSIC.play(sound, 0, volume).then(() => this.__playEnginesHumm());
     }

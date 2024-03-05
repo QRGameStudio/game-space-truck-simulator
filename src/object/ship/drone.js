@@ -1,4 +1,6 @@
 class GEODrone extends GEOShip {
+    static t = 'drone';
+
     /**
      *
      * @param game {GEG}
@@ -24,7 +26,7 @@ class GEODrone extends GEOShip {
         this.target = null;
         this.wantedTargetDistance = 120;
         this.maxTargetDistance = 1000;
-        this.t = 'drone';
+        this.t = GEODrone.t;
 
         this.__laserTimeout = 2000;
 

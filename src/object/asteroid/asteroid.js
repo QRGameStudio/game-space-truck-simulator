@@ -27,6 +27,10 @@ class GEOAsteroid extends GEOSavable {
 
     step() {
         this.ia += this.spinSpeed;
+
+        if (this.w <= 10) {
+            this.die();
+        }
     }
 
     oncollision(other) {
@@ -73,7 +77,7 @@ class GEOAsteroid extends GEOSavable {
     saveDict() {
         return {
             ...super.saveDict(),
-            size: this.size,
+            size: this.w,
             spinSpeed: this.spinSpeed,
             fieldId: this.fieldId
         };

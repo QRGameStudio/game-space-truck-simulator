@@ -124,7 +124,9 @@ async function loadGame() {
         const asteroid = obj;
         if (asteroid.fieldId !== null) {
             const field = fields.find(x => x.uuid === asteroid.fieldId);
-            field.asteroids.push(asteroid);
+            if (field) {
+                field.asteroids.push(asteroid);
+            }
         }
     }
 
@@ -163,6 +165,14 @@ async function start() {
             while (PLAYER.getNearests(GEOAsteroidField.t, radius * 2).length < fields) {
                 new GEOAsteroidField(GAME, PLAYER.x + Math.random() * radius * 2 - radius, PLAYER.y + Math.random() * radius * 2 - radius);
             }
+
+            const piratesCount = [...GAME.objectsOfTypes(new Set([GEOPirate.t]))].length;
+            for (let i = 0; i < Math.max(Math.floor(radius / 100000), 1) - piratesCount; i++) {
+                console.log('[GAME] Creating pirate')
+                const pirate = new GEOPirate(GAME);
+                pirate.x = Math.random() * radius * 2 - radius;
+                pirate.y = Math.random() * radius * 2 - radius;
+            }
         };
 
         for (let i = 0; i < dustCount / 2; i++) {
@@ -178,12 +188,6 @@ async function start() {
         const randomStation = GEOStation.stations[Math.floor(GEOStation.stations.length * Math.random())];
         PLAYER.x = randomStation.x;
         PLAYER.y = randomStation.y;
-
-        for (let i = 0; i < Math.max(Math.floor(radius / 100000), 1); i++) {
-            const pirate = new GEOPirate(GAME);
-            pirate.x = Math.random() * radius * 2 - radius;
-            pirate.y = Math.random() * radius * 2 - radius;
-        }
     }
 
     GAME.onKeyDown = (key) => {

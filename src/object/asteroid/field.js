@@ -45,7 +45,7 @@ class GEOAsteroidField extends GEOSavable {
 
     step() {
         super.step();
-        this.asteroids = this.asteroids.filter((a) => !a.isDead);
+        this.asteroids = this.asteroids.filter((a) => !a.isDead || a.distanceFrom(this) > this.__field_radius * 1.5);
         if (this.asteroids.length < Math.max(this.minAsteroids, 0.1 * this.asteroidsCount)) {
             this.die();
         }
@@ -64,7 +64,8 @@ class GEOAsteroidField extends GEOSavable {
         return {
             ...super.saveDict(),
             name: this.name,
-            uuid: this.uuid
+            uuid: this.uuid,
+            radius: this.__field_radius
         };
     }
 
@@ -72,6 +73,7 @@ class GEOAsteroidField extends GEOSavable {
         super.loadDict(data);
         this.name = data.name;
         this.uuid = data.uuid;
+        this.__field_radius = data.radius
     }
 
     /**
