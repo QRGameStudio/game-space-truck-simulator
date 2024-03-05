@@ -121,7 +121,7 @@ class GEODrone extends GEOShip {
             }
 
             if (this.target === null) {
-                this.target = this.getNearest('ingot', this.maxTargetDistance) || this.getNearest('a', this.maxTargetDistance);
+                this.target = this.getNearest('ingot', this.maxTargetDistance) || this.getNearest(GEOAsteroid.t, this.maxTargetDistance);
                 if (this.target === null) {
                     this.returnToOwner = true;
                     this.__idle = true;
@@ -129,7 +129,7 @@ class GEODrone extends GEOShip {
             } else {
                 this.__idle = false;
                 switch (this.target.t) {
-                    case 'a':
+                    case GEOAsteroid.t:
                         const maxTargetDistance = this.r + this.wantedTargetDistance + this.target.r - this.target.s * 2;
                         if (this.goto(this.target.cx, this.target.cy, maxTargetDistance, this.target.s * 2) && this.rotateTo(this.target.cx, this.target.cy)) {
                             this.fireLasers();

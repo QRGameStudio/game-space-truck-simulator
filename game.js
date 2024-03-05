@@ -97,6 +97,8 @@ async function saveGame() {
         player: PLAYER.saveDict(),
         stations: saveDictBulkForType('space-station'),
         pirates: saveDictBulkForType('pirate'),
+        asteroid: saveDictBulkForType(GEOAsteroid.t),
+        fields: saveDictBulkForType(GEOAsteroidField.t),
         score: SCORE.get()
     });
 }
@@ -110,6 +112,22 @@ async function loadGame() {
     PLAYER.loadDict(saveData.player);
     saveData.stations.map(x => new GEOStation(GAME, 0, 0).loadDict(x));
     saveData.pirates.map(x => new GEOPirate(GAME).loadDict(x));
+    saveData.fields.map(x => new GEOAsteroidField(GAME, 0, 0, 0).loadDict(x));
+    saveData.asteroid.map(x => new GEOAsteroid(GAME).loadDict(x));
+
+    // noinspection JSValidateTypes
+    /** @type {GEOAsteroidField[]} */
+    const fields = [...GAME.objectsOfTypes(new Set([GEOAsteroidField.t]))];
+    for (const obj of GAME.objectsOfTypes(new Set([GEOAsteroid.t]))) {
+        // noinspection JSValidateTypes
+        /** @type {GEOAsteroid} */
+        const asteroid = obj;
+        if (asteroid.fieldId !== null) {
+            const field = fields.find(x => x.uuid === asteroid.fieldId);
+            field.asteroids.push(asteroid);
+        }
+    }
+
     await SCORE.set(saveData.score);
     return true;
 }
@@ -234,7 +252,7 @@ async function start() {
         }, functions)
     }
 
-    setInterval(() => saveGame(), 1000);
+    setInterval(() => saveGame(), 10000);
     initMusic();
     GAME.run();
 }

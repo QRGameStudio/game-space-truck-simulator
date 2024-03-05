@@ -1,61 +1,63 @@
-/**
- * @param game {GEG}
- * @param size {number}
- * @param x {number | null}
- * @param y {number | null}
- */
-function createAsteroid(game, size = 75, x = null, y = null) {
-    const sides = 8;
-    const gonioCoefficient = 2 * PI / sides;
-    let spinSpeed = (random() * 7) - 3.5;
+class GEOAsteroid extends GEOSavable {
+    static t = 'asteroid';
 
-    const obj = game.createObject();
-    obj.w = obj.h = size;
-    obj.x = x === null ? game.w - obj.wh + (random() * game.w * 0.05) : x;
-    obj.y = y === null ? game.h - obj.hh + (random() * game.h * 0.05) : y;
-    obj.s = 0.3 * random();
-    obj.d = random() * 360;
-    obj.t = 'a';
-    obj.cwl.add('l');
+    /**
+     * @param game {GEG}
+     * @param size {number}
+     * @param x {number | null}
+     * @param y {number | null}
+     * @param field {GEOAsteroidField | null}
+     */
+    constructor(game, size = 75, x = null, y = null, field = null) {
+        super(game);
+        this.sides = 8;
+        this.gonioCoefficient = 2 * PI / this.sides;
 
-    obj.step = () => {
-        obj.ia += spinSpeed;
+        this.spinSpeed = (random() * 7) - 3.5;
+        this.fieldId = field ? field.uuid : null;
+
+        this.w = this.h = size;
+        this.x = x === null ? game.w - this.wh + (random() * game.w * 0.05) : x;
+        this.y = y === null ? game.h - this.hh + (random() * game.h * 0.05) : y;
+        this.s = 0.3 * random();
+        this.d = random() * 360;
+        this.t = GEOAsteroid.t;
+        this.cwl.add('l');
     }
 
-    /** @param other {GEO} */
-    obj.oncollision = (other) => {
+    step() {
+        this.ia += this.spinSpeed;
+    }
+
+    oncollision(other) {
         switch (other.t) {
             case 'l':
                 // laser hit
                 // noinspection JSIgnoredPromiseFromCall
                 MUSIC.play('boom', 1, 5);
-                if (obj.w >= 30) {
-                    createAsteroid(game, obj.wh, obj.x - obj.wh, obj.y);
-                    createAsteroid(game, obj.wh, obj.x + obj.wh, obj.y);
+                if (this.w >= 30) {
+                    new GEOAsteroid(this.game, this.wh, this.x - this.wh, this.y);
+                    new GEOAsteroid(this.game, this.wh, this.x + this.wh, this.y);
                 } else {
-                    createIngot(game, obj.cx, obj.cy);
+                    createIngot(this.game, this.cx, this.cy);
                 }
-                obj.die();
+                this.die();
                 other.die();
                 break;
             case 'p':
                 // player hit
                 MUSIC.play('fail').then();
                 other.data.set('health', Math.floor(other.data.get('health') - size));
-                inventoryRenderer.render();
-                obj.die();
+                this.die();
                 break;
         }
-    };
+    }
 
-    /**
-     * @param ctx {CanvasRenderingContext2D}
-     */
-    obj.draw = (ctx) => {
+    draw(ctx) {
         ctx.beginPath();
-        for (let i = 0; i < sides; i++) {
-            const sideX = obj.x - obj.wh * cos(gonioCoefficient * i);
-            const sideY = obj.y - obj.hh * sin(gonioCoefficient * i);
+        for (let i = 0; i < this.sides; i++) {
+            const sideX = this.x - this.wh * cos(this.gonioCoefficient * i);
+            const sideY = this.y - this.hh * sin(this.gonioCoefficient * i);
             if (i === 0) {
                 ctx.moveTo(sideX, sideY);
             } else {
@@ -68,5 +70,19 @@ function createAsteroid(game, size = 75, x = null, y = null) {
         ctx.stroke();
     }
 
-    return obj;
+    saveDict() {
+        return {
+            ...super.saveDict(),
+            size: this.size,
+            spinSpeed: this.spinSpeed,
+            fieldId: this.fieldId
+        };
+    }
+
+    loadDict(data) {
+        super.loadDict(data);
+        this.spinSpeed = data.spinSpeed;
+        this.fieldId = data.fieldId;
+        this.w = this.h = data.size;
+    }
 }

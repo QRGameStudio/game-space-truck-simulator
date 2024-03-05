@@ -14,11 +14,19 @@ class GEOAsteroidField extends GEOSavable {
 
     static icon = GUt.ud('8J+qqA==');
 
-    constructor(game, x, y) {
+    /**
+     *
+     * @param game {GEG}
+     * @param x {number}
+     * @param y {number}
+     * @param asteroidsCount {number | null}
+     */
+    constructor(game, x, y, asteroidsCount = null) {
         super(game);
         this.x = x;
         this.y = y;
         this.t = GEOAsteroidField.t;
+        this.uuid = GUt.uuid();
         this.icon = GEOAsteroidField.icon;
         this.depleted = false;
         this.name = randomName(5, 10) + ' field';
@@ -31,7 +39,7 @@ class GEOAsteroidField extends GEOSavable {
          */
         this.asteroids = [];
         this.minAsteroids = 3;
-        this.asteroidsCount = this.minAsteroids + Math.floor(Math.random() * this.__field_radius / 10);
+        this.asteroidsCount = asteroidsCount !== null ? asteroidsCount : this.minAsteroids + Math.floor(Math.random() * this.__field_radius / 10);
         this.generateAsteroids(this.asteroidsCount);
     }
 
@@ -52,6 +60,20 @@ class GEOAsteroidField extends GEOSavable {
         super.die();
     }
 
+    saveDict() {
+        return {
+            ...super.saveDict(),
+            name: this.name,
+            uuid: this.uuid
+        };
+    }
+
+    loadDict(data) {
+        super.loadDict(data);
+        this.name = data.name;
+        this.uuid = data.uuid;
+    }
+
     /**
      *
      * @param count {number}
@@ -60,7 +82,7 @@ class GEOAsteroidField extends GEOSavable {
         for (let i = 0; i < count; i++) {
             const x = this.x + 2 * Math.random() * this.__field_radius - this.__field_radius;
             const y = this.y + 2 * Math.random() * this.__field_radius - this.__field_radius;
-            const asteroid = createAsteroid(this.game, 30 + Math.random() * 75, x, y)
+            const asteroid = new GEOAsteroid(this.game, 30 + Math.random() * 75, x, y, this)
             asteroid.s = 0;
             this.asteroids.push(asteroid);
         }
