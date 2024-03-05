@@ -72,8 +72,8 @@ class GEOMiner extends GEOShip {
             if (this.target.t !== GEOStation.t && targetDistance < this.wantedTargetDistance) {
                 this.target = null;
                 if (this.drone.docked) {
-                    const stoppingPoint = GUt.pointRelativeTo(this.cx, this.cy, GUt.absoluteAngle(this.d), 500, 0);
-                    this.goto(stoppingPoint.x, stoppingPoint.y, this.game.r * 2, 0);
+                    const stoppingPoint = GUt.pointRelativeTo(this.cx, this.cy, 0, 500, 0);
+                    this.goto(stoppingPoint.x, stoppingPoint.y, this.r * 4, 0);
                     this.drone.launch(this);
                 }
             }
