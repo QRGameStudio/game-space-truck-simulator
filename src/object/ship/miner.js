@@ -32,6 +32,7 @@ class GEOMiner extends GEOShip {
         switch (other.t) {
             case GEOStation.t:
                 this.inventory.clear();
+                this.target = null;
                 break;
         }
     }
