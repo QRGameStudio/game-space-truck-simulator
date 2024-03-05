@@ -2,8 +2,9 @@
  * @param game {GEG}
  * @param x {number}
  * @param y {number}
+ * @param creator {GEO}
  */
-function createIngot(game, x, y) {
+function createIngot(game, x, y, creator) {
     let spinSpeed = (random() * 3) - 1.5;
 
     const obj = game.createObject();
@@ -20,7 +21,7 @@ function createIngot(game, x, y) {
     obj.step = () => {
         obj.ia += spinSpeed;
 
-        if (obj.distanceFrom(PLAYER) > 2 * game.r) {
+        if (obj.distanceFrom(PLAYER) > 2 * game.r && obj.distanceFrom(creator) > 2 * game.r) {
             obj.die();
         }
     }

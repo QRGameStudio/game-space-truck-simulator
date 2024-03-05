@@ -156,6 +156,7 @@ async function start() {
 
     PLAYER = new GEOPlayer(GAME);
     GAME.cameraFollowObject = PLAYER;
+    GAME.hearingDistance = GAME.r * 4;
 
     const initialGameSaved = await loadGame();
 

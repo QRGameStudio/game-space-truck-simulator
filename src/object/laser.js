@@ -1,14 +1,34 @@
+class GEOLaser extends GEO {
+    /**
+     * @param game {GEG}
+     * @param owner {GEO}
+     * @param isLeft {boolean}
+     * @param targets {string[]}
+     * @return {GEO}
+     */
+    constructor(game, owner, isLeft, targets) {
+        super(game);
+        this.owner = owner;
+
+        const pos = GUt.pointRelativeTo(owner.x, owner.y, owner.d, owner.wh, owner.hh * 2/3 * (isLeft ? -1 : 1));
+        this.x = pos.x;
+        this.y = pos.y;
+        this.d = owner.d;
+    }
+}
+
+
 /**
  * @param game {GEG}
- * @param player {GEO}
+ * @param owner {GEO}
  * @param isLeft {boolean}
  * @param targets {string[]}
  * @return {GEO}
  */
-function createLaser(game, player, isLeft, targets) {
-    const obj = game.createObject(player.wh, player.hh * 2/3 * (isLeft ? -1 : 1), 0, player);
+function createLaser(game, owner, isLeft, targets) {
+    const obj = new GEOLaser(game, owner, isLeft, targets);
     obj.h = 3;
-    obj.w = player.wh * 2/3;
+    obj.w = owner.wh * 2/3;
     obj.s = 7;
     obj.t = 'l';
 
@@ -26,15 +46,16 @@ function createLaser(game, player, isLeft, targets) {
         ctx.closePath();
         ctx.stroke();
     }
-    MUSIC.play('laser', 1, 5).then();
 
     obj.oncollision = (other) => {
         other.health -= 5;
         obj.die();
     }
 
+    MUSIC.play('laser', 1, obj.soundVolume).then();
+
     obj.step = () => {
-      if (obj.distanceTo(PLAYER) > game.r * 10) {
+      if (obj.distanceTo(PLAYER) > game.r * 10 && obj.distanceTo(owner) > game.r * 10) {
           obj.die();
       }
     };

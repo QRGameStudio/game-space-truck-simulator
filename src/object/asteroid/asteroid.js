@@ -36,23 +36,20 @@ class GEOAsteroid extends GEOSavable {
     oncollision(other) {
         switch (other.t) {
             case 'l':
+                // noinspection JSValidateTypes
+                /** @type {GEOLaser} */
+                const laser = other;
                 // laser hit
                 // noinspection JSIgnoredPromiseFromCall
-                MUSIC.play('boom', 1, 5);
+                MUSIC.play('boom', 1, 0.5 * this.soundVolume);
                 if (this.w >= 30) {
                     new GEOAsteroid(this.game, this.wh, this.x - this.wh, this.y);
                     new GEOAsteroid(this.game, this.wh, this.x + this.wh, this.y);
                 } else {
-                    createIngot(this.game, this.cx, this.cy);
+                    createIngot(this.game, this.cx, this.cy, laser.owner);
                 }
                 this.die();
                 other.die();
-                break;
-            case 'p':
-                // player hit
-                MUSIC.play('fail').then();
-                other.data.set('health', Math.floor(other.data.get('health') - size));
-                this.die();
                 break;
         }
     }
