@@ -16,25 +16,14 @@ class GEOMiner extends GEOShip {
         this.target = null;
         this.drone = new GEODrone(this.game, this);
         this.maxTargetDistance = this.game.r * 2;
-        this.wantedTargetDistance = 500 + this.r;
+        this.wantedTargetDistance = 150 + this.r;
 
         this.maxSpeed = 150;
         this.health = 50;
-        this.inventory.size = 6;
+        this.inventory.size = 1;
 
         this.w = 40;
         this.h = 60;
-
-        this.cwl.add(GEOStation.t);
-    }
-
-    oncollision(other) {
-        switch (other.t) {
-            case GEOStation.t:
-                this.inventory.clear();
-                this.target = null;
-                break;
-        }
     }
 
     step() {
@@ -69,13 +58,15 @@ class GEOMiner extends GEOShip {
         } else {
             this.goto(this.target.x, this.target.y, 0, 0);
             const targetDistance = this.distanceFrom(this.target);
-            if (this.target.t !== GEOStation.t && targetDistance < this.wantedTargetDistance) {
-                this.target = null;
-                if (this.drone.docked) {
+            if (targetDistance < this.wantedTargetDistance) {
+                if (this.target.t === GEOStation.t) {
+                    this.inventory.clear();
+                } else if (this.drone.docked) {
                     const stoppingPoint = GUt.pointRelativeTo(this.cx, this.cy, 0, 500, 0);
                     this.goto(stoppingPoint.x, stoppingPoint.y, this.r * 4, 0);
                     this.drone.launch(this);
                 }
+                this.target = null;
             }
         }
     }

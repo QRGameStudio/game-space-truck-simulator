@@ -3,3 +3,4 @@
 // !G.import('drone.js')
 // !G.import('pirate.js')
 // !G.import('miner.js')
+// !G.import('trader.js')

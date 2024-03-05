@@ -106,6 +106,7 @@ async function saveGame() {
         asteroid: saveDictBulkForType(GEOAsteroid.t),
         fields: saveDictBulkForType(GEOAsteroidField.t),
         miners: saveDictBulkForType(GEOMiner.t),
+        traders: saveDictBulkForType(GEOTrader.t),
         score: SCORE.get()
     });
 }
@@ -122,6 +123,7 @@ async function loadGame() {
     saveData.fields.map(x => new GEOAsteroidField(GAME, 0, 0, 0).loadDict(x));
     saveData.asteroid.map(x => new GEOAsteroid(GAME).loadDict(x));
     saveData.miners.map(x => new GEOMiner(GAME).loadDict(x));
+    saveData.traders.map(x => new GEOTrader(GAME).loadDict(x));
 
     // noinspection JSValidateTypes
     /** @type {GEOAsteroidField[]} */
@@ -183,8 +185,8 @@ async function start() {
                 pirate.y = Math.random() * radius * 2 - radius;
             }
 
-            let minersCount = [...GAME.objectsOfTypes(new Set([GEOMiner.t]))].length;
             const stationsCount = [...GAME.objectsOfTypes(new Set([GEOStation.t]))].length;
+            let minersCount = [...GAME.objectsOfTypes(new Set([GEOMiner.t]))].length;
             while (minersCount < stationsCount / 2 + 1) {
                 console.log('[GAME] Creating miner')
                 const miner = new GEOMiner(GAME);
@@ -192,6 +194,16 @@ async function start() {
                 miner.x = randomStation.x;
                 miner.y = randomStation.y;
                 minersCount += 1;
+            }
+
+            let traders = [...GAME.objectsOfTypes(new Set([GEOTrader.t]))].length;
+            while (traders < stationsCount * 2) {
+                console.log('[GAME] Creating trader')
+                const trader = new GEOTrader(GAME);
+                const randomStation = GEOStation.stations[Math.floor(GEOStation.stations.length * Math.random())];
+                trader.x = randomStation.x;
+                trader.y = randomStation.y;
+                traders += 1;
             }
         };
 
@@ -212,10 +224,15 @@ async function start() {
 
     GAME.onKeyDown = (key) => {
         switch (key) {
-            case "t":
+            case "m":
                 const miner = new GEOMiner(GAME);
                 miner.x = PLAYER.x;
                 miner.y = PLAYER.y;
+                break;
+            case "t":
+                const trader = new GEOTrader(GAME);
+                trader.x = PLAYER.x;
+                trader.y = PLAYER.y;
                 break;
             case "f":
                 new GEOAsteroidField(GAME, PLAYER.x, PLAYER.y);
