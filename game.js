@@ -199,7 +199,19 @@ async function start() {
                 GAME.paused = true;
                 saveGame()
                     .then(() => MODAL.alert('The game was saved', 'SAVED'))
-                    .then(() => GAME.paused = false);
+                    .then(() => location.reload());
+                break;
+            case "r":
+                GAME.paused = true;
+                MODAL.yesNo('Do you really want to reset the save game?', "DELETE SAVE")
+                    .then((response) => {
+                        if (!response) {
+                            GAME.paused = false;
+                            return;
+                        }
+                        STORAGE.del('save');
+                        location.reload();
+                    });
                 break;
             case "-":
                 GAME.zoom /= 1.1;
