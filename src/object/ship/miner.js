@@ -24,10 +24,17 @@ class GEOMiner extends GEOShip {
 
         this.w = 40;
         this.h = 60;
+
+        this.__stay_timeout = 0;
     }
 
     step() {
         super.step();
+
+        if (this.__stay_timeout > 0) {
+            this.__stay_timeout -= 1;
+            return;
+        }
 
         if (!this.drone.docked) {
             this.target = null;
@@ -61,6 +68,7 @@ class GEOMiner extends GEOShip {
             if (targetDistance < this.wantedTargetDistance) {
                 if (this.target.t === GEOStation.t) {
                     this.inventory.clear();
+                    this.__stay_timeout = (2 + Math.floor(15 * Math.random())) * this.game.fps;
                 } else if (this.drone.docked) {
                     const stoppingPoint = GUt.pointRelativeTo(this.cx, this.cy, 0, 500, 0);
                     this.goto(stoppingPoint.x, stoppingPoint.y, this.r * 4, 0);

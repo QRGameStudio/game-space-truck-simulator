@@ -1,9 +1,11 @@
 class GEOPlayer extends GEOShip {
+    static t = 'p';
+
     constructor(game) {
         super(game, 'white');
         this.x = 0;
         this.y = 0;
-        this.t = 'p';
+        this.t = GEOPlayer.t;
 
         this.drone = new GEODrone(this.game, this);
 

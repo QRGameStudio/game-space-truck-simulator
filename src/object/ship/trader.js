@@ -22,10 +22,17 @@ class GEOTrader extends GEOShip {
 
         this.w = 60;
         this.h = 60;
+
+        this.__stay_timeout = 0;
     }
 
     step() {
         super.step();
+
+        if (this.__stay_timeout > 0) {
+            this.__stay_timeout -= 1;
+            return;
+        }
 
         if ((this.target !== null && this.target.isDead )
         ) {
@@ -39,6 +46,7 @@ class GEOTrader extends GEOShip {
         } else {
             if (this.goto(this.target.x, this.target.y, this.wantedTargetDistance, 0)) {
                 this.target = null;
+                this.__stay_timeout = (10 + Math.floor(30 * Math.random())) * this.game.fps;
             }
         }
     }

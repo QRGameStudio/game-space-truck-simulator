@@ -40,7 +40,7 @@ class GEOPirate extends GEOShip {
         }
 
         if (this.target === null) {
-            this.target = this.getNearest('p', this.maxTargetDistance) || null;
+            this.target = this.getNearest(new Set([GEOPlayer.t, GEOMiner.t, GEOTrader.t]), this.maxTargetDistance) || null;
 
             if (this.__autopilot === null && GEOAsteroidField.fields.length > 0) {
                 const asteroidFields = this.getNearests(GEOAsteroidField.t);
