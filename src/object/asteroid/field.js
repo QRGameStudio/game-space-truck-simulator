@@ -30,6 +30,7 @@ class GEOAsteroidField extends GEOSavable {
         this.icon = GEOAsteroidField.icon;
         this.depleted = false;
         this.name = randomName(5, 10) + ' field';
+        this.label = new GEOLabel(game, this, this.name);
 
         GEOAsteroidField.fields.push({x: Math.floor(x), y: Math.floor(y), id: this.id, name: this.name});
         this.__field_radius = Math.random() * 1000;
@@ -71,7 +72,7 @@ class GEOAsteroidField extends GEOSavable {
 
     loadDict(data) {
         super.loadDict(data);
-        this.name = data.name;
+        this.name = this.label.text = data.name;
         this.uuid = data.uuid;
         this.__field_radius = data.radius
     }

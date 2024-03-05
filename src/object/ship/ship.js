@@ -18,6 +18,7 @@ class GEOShip extends GEOSavable {
         this.w = 75;
         this.h = 25;
         this.t = 'ship';
+        this.label = new GEOLabel(game, this, randomName(7, 10));
 
         /**
          * @type {Inventory}
@@ -35,7 +36,7 @@ class GEOShip extends GEOSavable {
         this.color = color;
         this.__canFireLasers = true;
         this.__laserTimeout = 200;
-        this.__lasersTargets = ['a', 'pirate'];
+        this.__lasersTargets = [GEOPirate.t, GEOAsteroid.t, GEOTrader.t, GEOMiner.t];
         /**
          * @type {GEOShipAutopilot | null}
          * @protected

@@ -8,6 +8,7 @@ class GEOTrader extends GEOShip {
     constructor(game) {
         super(game, 'cyan');
         this.t = GEOTrader.t;
+        this.label.text = "Trader " + this.label.text;
 
         /**
          *

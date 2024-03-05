@@ -24,6 +24,7 @@ class GEOStation extends GEOSavable {
         this.__spin_speed = 1;
         this.icon = GEOStation.icon;
         this.name = randomName(5, 10) + ' station';
+        this.label = new GEOLabel(game, this, this.name);
 
         GEOStation.stations.push({x: this.x, y: this.y, name: this.name});
     }
@@ -55,7 +56,7 @@ class GEOStation extends GEOSavable {
     }
 
     loadDict(data) {
-        this.name = data.name;
+        this.name = this.label.text = data.name;
         super.loadDict(data);
     }
 }
