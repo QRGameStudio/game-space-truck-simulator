@@ -63,9 +63,15 @@ function randomName(lengthMin, lengthMax) {
  *
  * @template T
  * @param items {{item: T, weight: number}[]}
+ * @param reversed {boolean}
  * @return T
  */
-function weightedRandomChoice(items) {
+function weightedRandomChoice(items, reversed = false) {
+    if (reversed) {
+        const maxWeight = Math.max(...items.map(x => x.weight)) + 1;
+        items = items.map((x) => ({...x, weight: maxWeight - x.weight}))
+    }
+
     items.sort((a, b) => a.weight - b.weight);
     const weightSumMax = items.map((x) => x.weight).reduce((a, b) => a + b, 0);
     const randomWeight = weightSumMax * Math.random();
@@ -99,6 +105,7 @@ async function saveGame() {
         pirates: saveDictBulkForType('pirate'),
         asteroid: saveDictBulkForType(GEOAsteroid.t),
         fields: saveDictBulkForType(GEOAsteroidField.t),
+        miners: saveDictBulkForType(GEOMiner.t),
         score: SCORE.get()
     });
 }
@@ -114,6 +121,7 @@ async function loadGame() {
     saveData.pirates.map(x => new GEOPirate(GAME).loadDict(x));
     saveData.fields.map(x => new GEOAsteroidField(GAME, 0, 0, 0).loadDict(x));
     saveData.asteroid.map(x => new GEOAsteroid(GAME).loadDict(x));
+    saveData.miners.map(x => new GEOMiner(GAME).loadDict(x));
 
     // noinspection JSValidateTypes
     /** @type {GEOAsteroidField[]} */
@@ -173,6 +181,17 @@ async function start() {
                 pirate.x = Math.random() * radius * 2 - radius;
                 pirate.y = Math.random() * radius * 2 - radius;
             }
+
+            let minersCount = [...GAME.objectsOfTypes(new Set([GEOMiner.t]))].length;
+            const stationsCount = [...GAME.objectsOfTypes(new Set([GEOStation.t]))].length;
+            while (minersCount < stationsCount / 2 + 1) {
+                console.log('[GAME] Creating miner')
+                const miner = new GEOMiner(GAME);
+                const randomStation = GEOStation.stations[Math.floor(GEOStation.stations.length * Math.random())];
+                miner.x = randomStation.x;
+                miner.y = randomStation.y;
+                minersCount += 1;
+            }
         };
 
         for (let i = 0; i < dustCount / 2; i++) {
@@ -192,6 +211,14 @@ async function start() {
 
     GAME.onKeyDown = (key) => {
         switch (key) {
+            case "t":
+                const miner = new GEOMiner(GAME);
+                miner.x = PLAYER.x;
+                miner.y = PLAYER.y;
+                break;
+            case "f":
+                new GEOAsteroidField(GAME, PLAYER.x, PLAYER.y);
+                break;
             case " ":
                 PLAYER.fireLasers();
                 break;

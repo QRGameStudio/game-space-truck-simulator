@@ -38,7 +38,7 @@ class GEOShip extends GEOSavable {
         this.__lasersTargets = ['a', 'pirate'];
         /**
          * @type {GEOShipAutopilot | null}
-         * @private
+         * @protected
          */
         this.__autopilot = null;
     }
@@ -80,7 +80,6 @@ class GEOShip extends GEOSavable {
             const distanceLeft = this.distanceTo(this.__autopilot) - this.__autopilot.accuracy;
             const stepsLeft = distanceLeft / this.s;
             const closingIn = this.s < 1 ? true : this.game.distanceBetween(this.__autopilot, this.nextPos) + 2 * this.s / 3 <= this.distanceTo(this.__autopilot);
-            // console.log(closingIn, this.__autopilot, this.game.distanceBetween(this.__autopilot, this.nextPos), this.distanceTo(this.__autopilot), this.x, this.y, this.nextPos);
 
             if (this.s > this.maxSpeed || !closingIn || stepsLeft < speedDownStepsLeft) {
                 this.decelerate(closingIn ? Math.max(this.__autopilot.slowTo, 3) : 0);

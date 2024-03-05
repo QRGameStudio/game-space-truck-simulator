@@ -48,7 +48,7 @@ class GEODrone extends GEOShip {
      * @return {boolean}
      */
     get idle() {
-        return this.__idle;
+        return this.owner.inventory.full || this.inventory.full || this.__idle;
     }
 
     /**
@@ -57,6 +57,13 @@ class GEODrone extends GEOShip {
      */
     get docked() {
         return this.__docked;
+    }
+
+    /**
+     * @return {boolean}
+     */
+    get inRangeForDock() {
+        return !this.returnToOwner && this.distanceFrom(this.owner) <= this.owner.r * 1.5;
     }
 
     dock() {
@@ -105,7 +112,7 @@ class GEODrone extends GEOShip {
 
         super.step();
 
-        if (this.returnToOwner || this.owner.inventory.full || this.inventory.full || this.distanceFrom(this.owner) > this.maxOwnerDistance) {
+        if (this.returnToOwner || this.idle || this.distanceFrom(this.owner) > this.maxOwnerDistance) {
             this.returnToOwner = true;
             this.target = null;
 
