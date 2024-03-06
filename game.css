@@ -96,6 +96,10 @@ body, #game-layer {
     color: white;
 }
 
+.controls-cargo {
+    cursor: pointer;
+}
+
 .buttons {
     display: flex;
     justify-content: center;

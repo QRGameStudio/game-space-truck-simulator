@@ -42,6 +42,8 @@ class GEOShip extends GEOSavable {
          * @protected
          */
         this.__autopilot = null;
+
+        this.__playEnginesHumm();
     }
 
     draw(ctx) {
@@ -203,5 +205,20 @@ class GEOShip extends GEOSavable {
         super.loadDict(data);
         this.__autopilot = data.autopilot;
         this.inventory.parse(data.inventory);
+    }
+
+    __playEnginesHumm() {
+        let sound;
+        if (this.s < 30) {
+            sound = 'humm0';
+        } else if (this.s < 310) {
+            sound = 'humm1';
+        } else {
+            sound = 'humm2';
+        }
+
+        const volume = this.s < 1 ? 0 : 5 + 20 * (this.s / this.maxSpeed);
+
+        MUSIC.play(sound, 0, volume * this.soundVolume * 0.01).then(() => this.__playEnginesHumm());
     }
 }

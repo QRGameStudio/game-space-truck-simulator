@@ -13,11 +13,11 @@ class GEOPlayer extends GEOShip {
         this.rendererDrone = new GRenderer($('.drone'));
         this.rendererAlert = new GRenderer($('.alert'), {alert: false});
         this.__renderDrone();
+        // noinspection JSUnusedGlobalSymbols
         this.rendererPosition = new GRenderer($('.position'),
             {system: '', x: 0, y: 0, inventory: {sum: 0, capacity: 0},
-            drone: false});
+            drone: false}, null, {showInventory: showInventory});
 
-        this.__playEnginesHumm();
         this.__pirateAlertPlayed = false;
         this.__cargoFullAlertPlayed = false;
         this.__droneIdleAlertPlayed = false;
@@ -159,21 +159,6 @@ class GEOPlayer extends GEOShip {
             this.__renderDrone();
         };
         this.rendererDrone.render();
-    }
-
-    __playEnginesHumm() {
-        let sound;
-        if (this.s < 30) {
-            sound = 'humm0';
-        } else if (this.s < 310) {
-            sound = 'humm1';
-        } else {
-            sound = 'humm2';
-        }
-
-        const volume = this.s < 1 ? 0 : 5 + 20 * (this.s / this.maxSpeed);
-
-        MUSIC.play(sound, 0, volume).then(() => this.__playEnginesHumm());
     }
 }
 

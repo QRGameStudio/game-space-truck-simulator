@@ -31,7 +31,11 @@ class Inventory {
      * @param count {number}
      */
     set(item, count) {
-        this.__content.set(item, count);
+        if (count <= 0) {
+            this.__content.delete(item);
+        } else {
+            this.__content.set(item, count);
+        }
     }
 
     /**

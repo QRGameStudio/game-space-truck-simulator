@@ -145,6 +145,13 @@ async function loadGame() {
 }
 
 
+function showInventory() {
+    MODAL.show('inventory', {
+        inventory: PLAYER.inventory
+    });
+}
+
+
 async function start() {
     // noinspection JSValidateTypes
     /**
@@ -236,6 +243,9 @@ async function start() {
                 break;
             case "f":
                 new GEOAsteroidField(GAME, PLAYER.x, PLAYER.y);
+                break;
+            case "i":
+                showInventory();
                 break;
             case " ":
                 PLAYER.fireLasers();
