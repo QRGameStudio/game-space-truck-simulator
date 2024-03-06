@@ -28,6 +28,17 @@ class GEOStation extends GEOSavable {
         this.label = new GEOLabel(game, this, this.name);
         this.inventory = new Inventory(10000);
         this.inventory.add('metal', 300 + Math.floor(Math.random() * this.inventory.size));
+        this.inventory.onchange = (item, count) => {
+            if (this.__modal_renderer) {
+                this.__modal_renderer.render();
+            }
+        }
+
+        /**
+         * @type {GRenderer|null}
+         * @private
+         */
+        this.__modal_renderer = null;
 
         GEOStation.stations.push({x: this.x, y: this.y, name: this.name});
     }
@@ -38,6 +49,47 @@ class GEOStation extends GEOSavable {
         }
 
         console.debug("[STS] Welcome to", this.name);
+
+        const backData = {};
+        MODAL.show('station', {
+            station: this,
+            player: PLAYER
+        }, {
+            /**
+             * @param item {string}
+             * @param count {number | null}
+             */
+            buy: (item, count) => {
+                if (count === null) {
+                    count = Math.min(PLAYER.inventory.free, this.inventory.get(item));
+                }
+
+                const sellingPrice = this.sellingPrice(item);
+                let price = sellingPrice * count;
+                if (price > SCORE.get()) {
+                    return;
+                }
+                count = GEOStation.transferCargo(this, PLAYER, item, count);
+                SCORE.inc(-1 * count * sellingPrice);
+                this.__modal_renderer?.render();
+            },
+            /**
+             * @param item {string}
+             * @param count {number | null}
+             */
+            sell: (item, count) => {
+                if (count === null) {
+                    count = Math.min(this.inventory.free, PLAYER.inventory.get(item));
+                }
+
+                const price = this.buyingPrice(item);
+                count = GEOStation.transferCargo(PLAYER, this, item, count);
+                SCORE.inc(count * price);
+                this.__modal_renderer?.render();
+            }
+        }, backData).then(() => this.__modal_renderer = null);
+        MODAL.fetchRendererFromBackData(backData).then((renderer) => this.__modal_renderer = renderer);
+
         return true;
     }
 
@@ -103,16 +155,6 @@ class GEOStation extends GEOSavable {
     step() {
         super.step();
         this.ia += this.__spin_speed;
-        this.label.text = `${this.name} (${this.inventory.get('metal')} stock, buying for ${this.buyingPrice('metal')} C, selling for ${this.sellingPrice('metal')} C)`;
-
-        if (this.distanceFrom(PLAYER) < this.r * 5 && PLAYER.s === 0) {
-            const buyingPrice = this.buyingPrice('metal');
-            const transferred = GEOStation.transferCargo(PLAYER, this, 'metal', PLAYER.inventory.get('metal'));
-            if (transferred) {
-                MUSIC.play('successLong').then();
-                SCORE.inc(transferred * buyingPrice).then(() => PLAYER.inventory.set('metal', 0));
-            }
-        }
     }
 
     draw(ctx) {

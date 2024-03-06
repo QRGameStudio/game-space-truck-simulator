@@ -36,6 +36,7 @@ class Inventory {
         } else {
             this.__content.set(item, count);
         }
+        this.onchange(item, count);
     }
 
     /**
@@ -62,6 +63,15 @@ class Inventory {
         const stock = this.get(item);
         this.set(item, Math.max(this.get(item) - count, 0));
         return count <= stock;
+    }
+
+    /**
+     *
+     * @param item {string}
+     * @param count {number}
+     */
+    onchange(item, count) {
+
     }
 
 
