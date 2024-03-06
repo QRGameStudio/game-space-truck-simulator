@@ -21,6 +21,7 @@ class GEOStation extends GEOSavable {
         this.y = y;
         this.t = GEOStation.t;
         this.w = this.h = 120;
+        this.clickable = true;
         this.__spin_speed = 1;
         this.icon = GEOStation.icon;
         this.name = randomName(5, 10) + ' station';
@@ -29,6 +30,15 @@ class GEOStation extends GEOSavable {
         this.inventory.add('metal', 300 + Math.floor(Math.random() * this.inventory.size));
 
         GEOStation.stations.push({x: this.x, y: this.y, name: this.name});
+    }
+
+    onclick(x, y, clickedObject) {
+        if (this.distanceFrom(PLAYER) > this.r  + 300) {
+            return false;
+        }
+
+        console.debug("[STS] Welcome to", this.name);
+        return true;
     }
 
     /**
