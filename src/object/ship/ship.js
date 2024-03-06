@@ -197,6 +197,7 @@ class GEOShip extends GEOSavable {
         const data = super.saveDict();
         data.autopilot = this.__autopilot;
         data.inventory = this.inventory.stringify();
+        data.label = this.label.text;
 
         return data;
     }
@@ -204,6 +205,7 @@ class GEOShip extends GEOSavable {
     loadDict(data) {
         super.loadDict(data);
         this.__autopilot = data.autopilot;
+        this.label.text = data.label;
         this.inventory.parse(data.inventory);
     }
 

@@ -26,9 +26,16 @@ class GEOStation extends GEOSavable {
         this.icon = GEOStation.icon;
         this.name = randomName(5, 10) + ' station';
         this.label = new GEOLabel(game, this, this.name);
-        this.inventory = new Inventory(10000);
-        this.inventory.add('metal', 300 + Math.floor(Math.random() * this.inventory.size));
-        this.inventory.onchange = (item, count) => {
+        this.inventory = new Inventory(2000);
+
+        const inventoryFill = Math.floor(Math.random() * 0.75 * this.inventory.size);
+        while (this.inventory.sum() < inventoryFill) {
+            const count = Math.round(Math.min(Math.random() * inventoryFill * 0.1, inventoryFill - this.inventory.sum()));
+            const item = weightedRandomChoice(ITEMS_ARR.map(item => ({item, weight: item.dropRate})));
+            this.inventory.add(item.name, count);
+        }
+
+        this.inventory.onchange = (_, __) => {
             if (this.__modal_renderer) {
                 this.__modal_renderer.render();
             }
@@ -53,7 +60,8 @@ class GEOStation extends GEOSavable {
         const backData = {};
         MODAL.show('station', {
             station: this,
-            player: PLAYER
+            player: PLAYER,
+            items: ITEMS_ARR
         }, {
             /**
              * @param item {string}
@@ -70,7 +78,7 @@ class GEOStation extends GEOSavable {
                     return;
                 }
                 count = GEOStation.transferCargo(this, PLAYER, item, count);
-                SCORE.inc(-1 * count * sellingPrice);
+                SCORE.inc(-1 * count * sellingPrice).then();
                 this.__modal_renderer?.render();
             },
             /**
@@ -84,7 +92,7 @@ class GEOStation extends GEOSavable {
 
                 const price = this.buyingPrice(item);
                 count = GEOStation.transferCargo(PLAYER, this, item, count);
-                SCORE.inc(count * price);
+                SCORE.inc(count * price).then();
                 this.__modal_renderer?.render();
             }
         }, backData).then(() => this.__modal_renderer = null);
@@ -96,18 +104,11 @@ class GEOStation extends GEOSavable {
     /**
      *
      * @param item {string}
+     * @param stationPrices {{[stationId: number]: number}}
      * @return {number}
      */
-    itemPrice(item) {
-        let basePrice;
-
-        switch (item){
-            case "metal":
-                basePrice = 1;
-                break;
-            default:
-                throw new Error(`Unknown base price for ${item}`);
-        }
+    itemPrice(item, stationPrices = {}) {
+        let basePrice = ITEMS[item].basePrice;
 
         let price = basePrice;
         let field = this.getNearest(GEOAsteroidField.t);
@@ -116,6 +117,28 @@ class GEOStation extends GEOSavable {
             price = (price + 1) ** 2;
         } else {
             price += basePrice * this.distanceFrom(field) / (4 * 500 * 1000);  // 500km ~ 1min of travel with basic ship
+        }
+
+        stationPrices[this.id] = price;
+
+        let otherModifier = 0;
+        let otherCount = 0;
+        for (const obj of this.game.objectsOfTypes(new Set([GEOStation.t]))) {
+            if (obj.id === this.id) {
+                continue;
+            }
+            if (obj.id in stationPrices) {
+                otherModifier += stationPrices[obj.id];
+                continue;
+            }
+            // noinspection JSValidateTypes
+            /** @type {GEOStation} */
+            const station = obj;
+            otherModifier += station.itemPrice(item, stationPrices) * this.distanceFrom(station) / (8 * 500 * 1000);   // 500km ~ 1min of travel with basic ship
+        }
+
+        if (otherCount) {
+            price += otherModifier / otherCount;
         }
 
         return price;

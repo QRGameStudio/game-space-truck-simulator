@@ -23,6 +23,10 @@ class GEOPlayer extends GEOShip {
         this.__droneIdleAlertPlayed = false;
     }
 
+    get autopilot() {
+        return this.__autopilot;
+    }
+
     die() {
         const nearestBase = this.getNearest(GEOStation.t);
         this.x = nearestBase.cx;

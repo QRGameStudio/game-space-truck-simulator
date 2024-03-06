@@ -44,7 +44,7 @@ class GEOTrader extends GEOShip {
         if (this.target === null) {
             const stations = this.getNearests(GEOStation.t);
             // noinspection JSValidateTypes
-            this.target = weightedRandomChoice(stations.map((x, i) => ({item: x, weight: stations.length - i + 1})));
+            this.target = weightedRandomChoice(stations.map((x, i) => ({item: x, weight: (i + 2) ** 2})), true);
         } else {
             if (this.goto(this.target.x, this.target.y, this.wantedTargetDistance, 0)) {
                 const to  = GEOStation.transferCargo(this, this.target);

@@ -150,44 +150,44 @@
                     <tr><th>Item</th><th>Price</th><th>Station</th><th>Player</th><th>Buy</th><th>Sell</th></tr>
                     </thead>
                     <tbody>
-                    <tr r-for="item of v.station.inventory.keys()">
+                    <tr r-for="item of v.items">
                         <td>
-                            <span r-var="l.item.toUpperCase()"></span>
+                            <span r-var="l.item.name.toUpperCase()"></span>
                         </td>
                         <td>
                             <span class="badge bg-primary">
-                                <span r-var="v.station.sellingPrice(l.item)"></span> <span r-var="GUt.ud('8J+qmQ==')"></span>
+                                <span r-var="v.station.sellingPrice(l.item.name)"></span> <span r-var="GUt.ud('8J+qmQ==')"></span>
                             </span>
 
                             <span class="badge bg-danger">
-                                <span r-var="v.station.buyingPrice(l.item)"></span> <span r-var="GUt.ud('8J+qmQ==')"></span>
+                                <span r-var="v.station.buyingPrice(l.item.name)"></span> <span r-var="GUt.ud('8J+qmQ==')"></span>
                             </span>
                         </td>
                         <td>
-                            <span r-var="v.station.inventory.get(l.item)"></span> t
+                            <span r-var="v.station.inventory.get(l.item.name)"></span> t
                         </td>
                         <td>
-                            <span r-var="v.player.inventory.get(l.item)"></span> t
+                            <span r-var="v.player.inventory.get(l.item.name)"></span> t
                         </td>
                         <td>
-                            <button r-if="v.station.inventory.get(l.item) >= 1" class="btn btn-primary" r-click="f.buy(l.item, 1)">
+                            <button r-if="v.station.inventory.get(l.item.name) >= 1" class="btn btn-primary" r-click="f.buy(l.item.name, 1)">
                                 Buy 1
                             </button>
-                            <button r-if="v.station.inventory.get(l.item) >= 10" class="btn btn-primary" r-click="f.buy(l.item, 10)">
+                            <button r-if="v.station.inventory.get(l.item.name) >= 10" class="btn btn-primary" r-click="f.buy(l.item.name, 10)">
                                 Buy 10
                             </button>
-                            <button r-if="v.station.inventory.get(l.item) >= 1" class="btn btn-primary" r-click="f.buy(l.item, null)">
+                            <button r-if="v.station.inventory.get(l.item.name) >= 1" class="btn btn-primary" r-click="f.buy(l.item.name, null)">
                                 Buy all
                             </button>
                         </td>
                         <td>
-                            <button r-if="v.player.inventory.get(l.item) >= 1" class="btn btn-danger" r-click="f.sell(l.item, 1)">
+                            <button r-if="v.player.inventory.get(l.item.name) >= 1" class="btn btn-danger" r-click="f.sell(l.item.name, 1)">
                                 Sell 1
                             </button>
-                            <button r-if="v.player.inventory.get(l.item) >= 10" class="btn btn-danger" r-click="f.sell(l.item, 1)">
+                            <button r-if="v.player.inventory.get(l.item.name) >= 10" class="btn btn-danger" r-click="f.sell(l.item.name, 1)">
                                 Sell 10
                             </button>
-                            <button r-if="v.player.inventory.get(l.item) >= 1" class="btn btn-danger" r-click="f.sell(l.item, null)">
+                            <button r-if="v.player.inventory.get(l.item.name) >= 1" class="btn btn-danger" r-click="f.sell(l.item.name, null)">
                                 Sell all
                             </button>
                         </td>

@@ -68,7 +68,7 @@ function randomName(lengthMin, lengthMax) {
  */
 function weightedRandomChoice(items, reversed = false) {
     if (reversed) {
-        const maxWeight = Math.max(...items.map(x => x.weight)) + 1;
+        const maxWeight = (items.map(x => x.weight)).reduce((a, b) => a + b, 0);
         items = items.map((x) => ({...x, weight: maxWeight - x.weight}))
     }
 
@@ -253,6 +253,13 @@ async function start() {
             case "p":
                 GAME.paused = true;
                 MODAL.alert('This game is paused', 'PAUSE').then(() => GAME.paused = false);
+                break;
+            case "j":
+                if (PLAYER.autopilot) {
+                    PLAYER.x = PLAYER.autopilot.x;
+                    PLAYER.y = PLAYER.autopilot.y;
+                    PLAYER.s = 0;
+                }
                 break;
             case "o":
                 GAME.paused = true;

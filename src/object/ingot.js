@@ -15,6 +15,7 @@ function createIngot(game, x, y, creator) {
     obj.s = 0.3 * random();
     obj.d = random() * 360;
     obj.t = 'ingot';
+    obj.item = weightedRandomChoice(ITEMS_ARR.map(item => ({item, weight: item.dropRate})));
     obj.cwl.add('p');
     obj.cwl.add('drone');
 
@@ -26,9 +27,9 @@ function createIngot(game, x, y, creator) {
         }
     }
 
-    /** @param other {GEOPlayer} */
+    /** @param other {GEOShip} */
     obj.oncollision = (other) => {
-        if (other.inventory.add('metal', 1)) {
+        if (other.inventory.add(obj.item.name, 1)) {
             obj.die();
         }
     };
@@ -37,7 +38,7 @@ function createIngot(game, x, y, creator) {
      * @param ctx {CanvasRenderingContext2D}
      */
     obj.draw = (ctx) => {
-        ctx.fillStyle = 'gray';
+        ctx.fillStyle = obj.item.color;
         ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
     }
 
