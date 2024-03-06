@@ -12,7 +12,7 @@ class GEOTrader extends GEOShip {
 
         /**
          *
-         * @type {null|GEO}
+         * @type {null|GEOStation}
          */
         this.target = null;
         this.wantedTargetDistance = 100 + this.r;
@@ -43,9 +43,13 @@ class GEOTrader extends GEOShip {
 
         if (this.target === null) {
             const stations = this.getNearests(GEOStation.t);
+            // noinspection JSValidateTypes
             this.target = weightedRandomChoice(stations.map((x, i) => ({item: x, weight: stations.length - i + 1})));
         } else {
             if (this.goto(this.target.x, this.target.y, this.wantedTargetDistance, 0)) {
+                const to  = GEOStation.transferCargo(this, this.target);
+                const from = GEOStation.transferCargo(this.target, this);
+                console.debug('[STS] Trader transferred cargo', to, from, this.inventory.size);
                 this.target = null;
                 this.__stay_timeout = (10 + Math.floor(30 * Math.random())) * this.game.fps;
             }

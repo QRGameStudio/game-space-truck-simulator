@@ -27,6 +27,7 @@ class GEODrone extends GEOShip {
         this.wantedTargetDistance = 120;
         this.maxTargetDistance = 1000;
         this.t = GEODrone.t;
+        this.label.text = "";
 
         this.__laserTimeout = 2000;
 

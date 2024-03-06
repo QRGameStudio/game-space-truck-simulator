@@ -197,7 +197,7 @@ async function start() {
             }
 
             let traders = [...GAME.objectsOfTypes(new Set([GEOTrader.t]))].length;
-            while (traders < stationsCount * 4) {
+            while (traders < stationsCount * 8) {
                 console.log('[GAME] Creating trader')
                 const trader = new GEOTrader(GAME);
                 const randomStation = GEOStation.stations[Math.floor(GEOStation.stations.length * Math.random())];

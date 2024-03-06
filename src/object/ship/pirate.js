@@ -43,7 +43,8 @@ class GEOPirate extends GEOShip {
         if (this.target === null) {
             this.target = this.getNearest(new Set([GEOPlayer.t, GEOMiner.t, GEOTrader.t]), this.maxTargetDistance) || null;
             if (this.target) {
-                console.debug('[STS] Target spotted', this.target?.t);
+                // noinspection JSUnresolvedReference
+                console.debug('[STS] Target spotted', this.target?.t, this.target?.label?.text);
             }
 
             if (this.__autopilot === null && GEOAsteroidField.fields.length > 0) {
