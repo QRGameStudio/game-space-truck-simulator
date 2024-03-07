@@ -69,7 +69,10 @@ class GEOMiner extends GEOShip {
             if (targetDistance < this.wantedTargetDistance) {
                 if (this.target.t === GEOStation.t) {
                     this.cancelGoto();
-                    this.inventory.keys().forEach((item) => GEOStation.transferCargo(this, this.target, item, this.inventory.get(item)))
+                    this.inventory.keys().forEach((item) => {
+                        const count = GEOStation.transferCargo(this, this.target, item, this.inventory.get(item));
+                        console.debug(`[STS] Miner deposited ${count} of ${item}`);
+                    });
                     this.__stay_timeout = (2 + Math.floor(15 * Math.random())) * this.game.fps;
                 } else if (this.drone.docked) {
                     const stoppingPoint = GUt.pointRelativeTo(this.cx, this.cy, 0, 500, 0);

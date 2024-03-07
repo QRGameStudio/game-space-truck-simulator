@@ -23,6 +23,9 @@ class GEOStation extends GEOSavable {
         this.w = this.h = 120;
         this.clickable = true;
         this.__spin_speed = 1;
+
+        this.__craftingTimeout = 0;
+
         this.icon = GEOStation.icon;
         this.name = randomName(5, 10) + ' station';
         this.label = new GEOLabel(game, this, this.name);
@@ -108,6 +111,7 @@ class GEOStation extends GEOSavable {
      * @return {number}
      */
     itemPrice(item, stationPrices = {}) {
+        // noinspection JSUnresolvedReference
         let basePrice = ITEMS[item].basePrice;
 
         let price = basePrice;
@@ -178,6 +182,34 @@ class GEOStation extends GEOSavable {
     step() {
         super.step();
         this.ia += this.__spin_speed;
+
+        if (this.__craftingTimeout <= 0) {
+            const canBeCrafted = ITEMS_ARR.filter(x => {
+                if (!x.crafting) {
+                    return false;
+                }
+                // check that this station has enough of each item
+                for (const requiredItem in x.crafting) {
+                    if (this.inventory.get(requiredItem) < x.crafting[requiredItem]) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            if (canBeCrafted.length) {
+                const craftedItem = weightedRandomChoice(canBeCrafted.map(item => ({item, weight: item.basePrice})));
+                for (const requiredItem in craftedItem.crafting) {
+                    this.inventory.remove(requiredItem, craftedItem.crafting[requiredItem]);
+                }
+                this.inventory.add(craftedItem.name, 1);
+                console.debug(`[STS] ${this.name} crafted ${craftedItem.name}`);
+            }
+
+            this.__craftingTimeout = Math.floor(2 + 180 * Math.random()) * this.game.fps;
+        } else {
+            this.__craftingTimeout -= 1;
+        }
     }
 
     draw(ctx) {
@@ -190,13 +222,15 @@ class GEOStation extends GEOSavable {
         return {
             ...super.saveDict(),
             name: this.name,
-            inventory: this.inventory.stringify()
+            inventory: this.inventory.stringify(),
+            craftingTimeout: this.__craftingTimeout
         };
     }
 
     loadDict(data) {
         this.name = this.label.text = data.name;
         this.inventory.parse(data.inventory);
+        this.__craftingTimeout = data.craftingTimeout;
         super.loadDict(data);
     }
 

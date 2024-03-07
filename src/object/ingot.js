@@ -3,8 +3,9 @@
  * @param x {number}
  * @param y {number}
  * @param creator {GEO}
+ * @param item {Item}
  */
-function createIngot(game, x, y, creator) {
+function createIngot(game, x, y, creator, item) {
     let spinSpeed = (random() * 3) - 1.5;
 
     const obj = game.createObject();
@@ -15,7 +16,7 @@ function createIngot(game, x, y, creator) {
     obj.s = 0.3 * random();
     obj.d = random() * 360;
     obj.t = 'ingot';
-    obj.item = weightedRandomChoice(ITEMS_ARR.map(item => ({item, weight: item.dropRate})));
+    obj.item = item;
     obj.cwl.add('p');
     obj.cwl.add('drone');
 

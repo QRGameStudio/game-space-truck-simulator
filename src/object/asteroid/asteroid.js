@@ -7,14 +7,16 @@ class GEOAsteroid extends GEOSavable {
      * @param x {number | null}
      * @param y {number | null}
      * @param field {GEOAsteroidField | null}
+     * @param item {Item | null}
      */
-    constructor(game, size = 75, x = null, y = null, field = null) {
+    constructor(game, size = 75, x = null, y = null, field = null, item = null) {
         super(game);
         this.sides = 8;
         this.gonioCoefficient = 2 * PI / this.sides;
 
         this.spinSpeed = (random() * 7) - 3.5;
         this.fieldId = field ? field.uuid : null;
+        this.item = item || GEOAsteroid.randomOre;
 
         this.w = this.h = size;
         this.x = x === null ? game.w - this.wh + (random() * game.w * 0.05) : x;
@@ -43,10 +45,10 @@ class GEOAsteroid extends GEOSavable {
                 // noinspection JSIgnoredPromiseFromCall
                 MUSIC.play('boom', 1, 0.5 * this.soundVolume);
                 if (this.w >= 30) {
-                    new GEOAsteroid(this.game, this.wh, this.x - this.wh, this.y);
-                    new GEOAsteroid(this.game, this.wh, this.x + this.wh, this.y);
+                    new GEOAsteroid(this.game, this.wh, this.x - this.wh, this.y, null, this.item);
+                    new GEOAsteroid(this.game, this.wh, this.x + this.wh, this.y, null, this.item);
                 } else {
-                    createIngot(this.game, this.cx, this.cy, laser.owner);
+                    createIngot(this.game, this.cx, this.cy, laser.owner, this.item);
                 }
                 this.die();
                 other.die();
@@ -76,7 +78,8 @@ class GEOAsteroid extends GEOSavable {
             ...super.saveDict(),
             size: this.w,
             spinSpeed: this.spinSpeed,
-            fieldId: this.fieldId
+            fieldId: this.fieldId,
+            item: this.item
         };
     }
 
@@ -85,5 +88,13 @@ class GEOAsteroid extends GEOSavable {
         this.spinSpeed = data.spinSpeed;
         this.fieldId = data.fieldId;
         this.w = this.h = data.size;
+        this.item = data.item
+    }
+
+    /**
+     * @return {Item}
+     */
+    static get randomOre() {
+        return weightedRandomChoice(ITEMS_ARR.filter(x => x.mineable).map(item => ({item, weight: item.dropRate})));
     }
 }

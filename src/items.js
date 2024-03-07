@@ -1,5 +1,5 @@
 /**
- * @typedef {{name: string, basePrice: number, color: string, dropRate: number}} Item
+ * @typedef {{name: string, basePrice: number, color: string, dropRate: number, mineable: boolean, crafting: {[itemName: string]: number} | null}} Item
  */
 
 /**
@@ -10,22 +10,41 @@ const ITEMS_ARR = [{
     name: 'metal',
     basePrice: 1,
     color: 'gray',
-    dropRate: 100
+    dropRate: 100,
+    mineable: true,
+    crafting: null
 }, {
     name: "gold",
     basePrice: 10,
     color: "yellow",
-    dropRate: 10
+    dropRate: 10,
+    mineable: true,
+    crafting: null
 }, {
     name: "copper",
     basePrice: 2,
     color: "orange",
     dropRate: 60,
+    mineable: true,
+    crafting: null
 }, {
     name: "water",
     basePrice: 8,
     color: "blue",
     dropRate: 20,
+    mineable: true,
+    crafting: null
+}, {
+    name: "battery",
+    basePrice: 25,
+    color: "blue",
+    dropRate: 5,
+    mineable: false,
+    crafting: {
+        "copper": 2,
+        "gold": 1,
+        "metal": 2
+    }
 }];
 
 
