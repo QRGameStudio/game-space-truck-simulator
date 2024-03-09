@@ -106,21 +106,29 @@ class GEOStation extends GEOSavable {
 
     /**
      *
-     * @param item {string}
+     * @param itemName {string}
      * @param stationPrices {{[stationId: number]: number}}
      * @return {number}
      */
-    itemPrice(item, stationPrices = {}) {
-        // noinspection JSUnresolvedReference
-        let basePrice = ITEMS[item].basePrice;
+    itemPrice(itemName, stationPrices = {}) {
+        const item = ITEMS[itemName];
 
-        let price = basePrice;
-        let field = this.getNearest(GEOAsteroidField.t);
+        let price = item.basePrice;
 
-        if (field === null) {
-            price = (price + 1) ** 2;
-        } else {
-            price += basePrice * this.distanceFrom(field) / (4 * 500 * 1000);  // 500km ~ 1min of travel with basic ship
+        if (item.mineable) {
+            let field = this.getNearests(GEOAsteroidField.t).find(x => x?.ore.name === itemName);
+
+            if (field === undefined) {
+                price = (price + 1) ** 2;
+            } else {
+                price += item.basePrice * this.distanceFrom(field) / (4 * 500 * 1000);  // 500km ~ 1min of travel with basic ship
+            }
+        }
+
+        if (item.crafting) {
+            for (const requiredItemName in item.crafting) {
+                price += this.itemPrice(requiredItemName) * item.crafting[requiredItemName];
+            }
         }
 
         stationPrices[this.id] = price;
@@ -138,7 +146,7 @@ class GEOStation extends GEOSavable {
             // noinspection JSValidateTypes
             /** @type {GEOStation} */
             const station = obj;
-            otherModifier += station.itemPrice(item, stationPrices) * this.distanceFrom(station) / (8 * 500 * 1000);   // 500km ~ 1min of travel with basic ship
+            otherModifier += station.itemPrice(itemName, stationPrices) * this.distanceFrom(station) / (8 * 500 * 1000);   // 500km ~ 1min of travel with basic ship
         }
 
         if (otherCount) {

@@ -29,7 +29,8 @@ class GEOAsteroidField extends GEOSavable {
         this.uuid = GUt.uuid();
         this.icon = GEOAsteroidField.icon;
         this.depleted = false;
-        this.name = randomName(5, 10) + ' field';
+        this.ore = GEOAsteroid.randomOre;
+        this.name = randomName(5, 10) + ` ${this.ore.name} field`;
         this.label = new GEOLabel(game, this, this.name);
 
         GEOAsteroidField.fields.push({x: Math.floor(x), y: Math.floor(y), id: this.id, name: this.name});
@@ -66,7 +67,8 @@ class GEOAsteroidField extends GEOSavable {
             ...super.saveDict(),
             name: this.name,
             uuid: this.uuid,
-            radius: this.__field_radius
+            radius: this.__field_radius,
+            ore: this.ore
         };
     }
 
@@ -74,6 +76,7 @@ class GEOAsteroidField extends GEOSavable {
         super.loadDict(data);
         this.name = this.label.text = data.name;
         this.uuid = data.uuid;
+        this.ore = data.ore;
         this.__field_radius = data.radius
     }
 
@@ -85,7 +88,7 @@ class GEOAsteroidField extends GEOSavable {
         for (let i = 0; i < count; i++) {
             const x = this.x + 2 * Math.random() * this.__field_radius - this.__field_radius;
             const y = this.y + 2 * Math.random() * this.__field_radius - this.__field_radius;
-            const asteroid = new GEOAsteroid(this.game, 30 + Math.random() * 75, x, y, this)
+            const asteroid = new GEOAsteroid(this.game, 30 + Math.random() * 75, x, y, this, this.ore)
             asteroid.s = 0;
             this.asteroids.push(asteroid);
         }

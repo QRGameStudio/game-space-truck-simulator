@@ -169,9 +169,9 @@ async function start() {
 
     const initialGameSaved = await loadGame();
 
-    const radius = 10000000;
-    const fields = 15;
-    const stations = 5;
+    const radius = 20000000;
+    const fields = 20;
+    const stations = 7;
 
     (() => {
         const dustCount = 100;
@@ -180,13 +180,14 @@ async function start() {
                 new GEODust(GAME);
             }
 
-            while (PLAYER.getNearests(GEOAsteroidField.t, radius * 2).length < fields) {
+            while (PLAYER.getNearests(GEOAsteroidField.t, radius).length < fields) {
+                console.log('[STS] Creating field');
                 new GEOAsteroidField(GAME, PLAYER.x + Math.random() * radius * 2 - radius, PLAYER.y + Math.random() * radius * 2 - radius);
             }
 
             const piratesCount = [...GAME.objectsOfTypes(new Set([GEOPirate.t]))].length;
             for (let i = 0; i < Math.max(Math.floor(radius / 100000), 1) - piratesCount; i++) {
-                console.log('[GAME] Creating pirate')
+                console.log('[STS] Creating pirate');
                 const pirate = new GEOPirate(GAME);
                 pirate.x = Math.random() * radius * 2 - radius;
                 pirate.y = Math.random() * radius * 2 - radius;
@@ -195,7 +196,7 @@ async function start() {
             const stationsCount = [...GAME.objectsOfTypes(new Set([GEOStation.t]))].length;
             let minersCount = [...GAME.objectsOfTypes(new Set([GEOMiner.t]))].length;
             while (minersCount < stationsCount / 2 + 1) {
-                console.log('[GAME] Creating miner')
+                console.log('[STS] Creating miner');
                 const miner = new GEOMiner(GAME);
                 const randomStation = GEOStation.stations[Math.floor(GEOStation.stations.length * Math.random())];
                 miner.x = randomStation.x;

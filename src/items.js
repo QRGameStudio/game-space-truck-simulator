@@ -28,12 +28,21 @@ const ITEMS_ARR = [{
     mineable: true,
     crafting: null
 }, {
-    name: "water",
+    name: "ice",
     basePrice: 8,
     color: "blue",
     dropRate: 20,
     mineable: true,
     crafting: null
+}, {
+    name: "water",
+    basePrice: 2,
+    color: "blue",
+    dropRate: 20,
+    mineable: false,
+    crafting: {
+        "ice": 1
+    }
 }, {
     name: "battery",
     basePrice: 25,

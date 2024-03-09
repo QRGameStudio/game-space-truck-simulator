@@ -48,7 +48,11 @@ class GEOAsteroid extends GEOSavable {
                     new GEOAsteroid(this.game, this.wh, this.x - this.wh, this.y, null, this.item);
                     new GEOAsteroid(this.game, this.wh, this.x + this.wh, this.y, null, this.item);
                 } else {
-                    createIngot(this.game, this.cx, this.cy, laser.owner, this.item);
+                    let ingotItem = this.item;
+                    if (Math.random() > 0.9) {
+                        this.item = GEOAsteroid.randomOre;
+                    }
+                    createIngot(this.game, this.cx, this.cy, laser.owner, ingotItem);
                 }
                 this.die();
                 other.die();
