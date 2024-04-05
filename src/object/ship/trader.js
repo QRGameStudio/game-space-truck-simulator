@@ -25,6 +25,11 @@ class GEOTrader extends GEOShip {
         this.h = 60;
 
         this.__stay_timeout = 0;
+        /**
+         * @type {null|GPoint}
+         * @private
+         */
+        this.__point_last_buy = null;
     }
 
     step() {
@@ -47,12 +52,29 @@ class GEOTrader extends GEOShip {
             this.target = weightedRandomChoice(stations.map((x, i) => ({item: x, weight: (i + 2) ** 2})), true);
         } else {
             if (this.goto(this.target.x, this.target.y, this.wantedTargetDistance, 0)) {
+                let salary = 0;
+                if (this.__point_last_buy) {
+                    salary = Math.log10(this.distanceTo(this.__point_last_buy));
+                }
+
                 const to  = GEOStation.transferCargo(this, this.target);
                 const from = GEOStation.transferCargo(this.target, this);
-                console.debug('[STS] Trader transferred cargo', to, from, this.inventory.size);
+                console.debug(`[STS] Trader transferred cargo for ${salary} C`, to, from, this.inventory.size);
+                (new GPopup(`${this.label.text} transferred cargo for ${salary} C`)).show();
                 this.target = null;
                 this.__stay_timeout = (10 + Math.floor(30 * Math.random())) * this.game.fps;
+                this.__point_last_buy = this.pos;
             }
         }
+    }
+
+    saveDict() {
+        return {...super.saveDict(), stayTimeout: this.__stay_timeout, pointLastBuy: this.__point_last_buy};
+    }
+
+    loadDict(data) {
+        this.__stay_timeout = data.stayTimeout;
+        this.__point_last_buy = data.pointLastBuy;
+        super.loadDict(data);
     }
 }
