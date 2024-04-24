@@ -54,13 +54,15 @@ class GEOTrader extends GEOShip {
             if (this.goto(this.target.x, this.target.y, this.wantedTargetDistance, 0)) {
                 let salary = 0;
                 if (this.__point_last_buy) {
-                    salary = Math.log10(this.distanceTo(this.__point_last_buy));
+                    salary = Math.round(Math.max(0, Math.log10(this.distanceTo(this.__point_last_buy)) ** 2));
                 }
 
                 const to  = GEOStation.transferCargo(this, this.target);
                 const from = GEOStation.transferCargo(this.target, this);
                 console.debug(`[STS] Trader transferred cargo for ${salary} C`, to, from, this.inventory.size);
-                (new GPopup(`${this.label.text} transferred cargo for ${salary} C`)).show();
+                if (salary) {
+                    (new GPopup(`${this.label.text} transferred cargo for ${salary} C`)).show();
+                }
                 this.target = null;
                 this.__stay_timeout = (10 + Math.floor(30 * Math.random())) * this.game.fps;
                 this.__point_last_buy = this.pos;

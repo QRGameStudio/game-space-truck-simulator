@@ -189,6 +189,7 @@ async function start() {
     GAME.cameraFollowObject = PLAYER;
     GAME.hearingDistance = GAME.r * 4;
     GAME.fullSimulationRange = GAME.r * 5;
+    GAME.fps = 240;
 
     const initialGameSaved = await loadGame();
 
