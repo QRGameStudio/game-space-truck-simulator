@@ -106,7 +106,7 @@ class GEODrone extends GEOShip {
         super.draw(ctx);
     }
 
-    step() {
+    async step() {
         if (this.__docked) {
             return;
         }
@@ -131,7 +131,7 @@ class GEODrone extends GEOShip {
             }
 
             if (this.target === null) {
-                this.target = this.getNearest('ingot', this.maxTargetDistance) || this.getNearest(GEOAsteroid.t, this.maxTargetDistance);
+                this.target = await this.getNearest('ingot', this.maxTargetDistance) || await this.getNearest(GEOAsteroid.t, this.maxTargetDistance);
                 if (this.target === null) {
                     this.returnToOwner = true;
                     this.__idle = true;

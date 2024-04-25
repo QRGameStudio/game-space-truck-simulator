@@ -41,7 +41,7 @@ class GEOPlayer extends GEOShip {
             .then(() => this.game.paused = false);
     }
 
-    step() {
+    async step() {
         super.step();
         if (this.game.kp('a')) {
             this.d -= this.turnSpeed;
@@ -64,7 +64,7 @@ class GEOPlayer extends GEOShip {
         /**
          * @type {GEOStation|GEOAsteroidField|null}
          */
-        const nearestOrientationPoint = this.getNearest(NAVIGABLE_TYPES, 20000);  // 20 km
+        const nearestOrientationPoint = await this.getNearest(NAVIGABLE_TYPES, 20000);  // 20 km
         this.rendererPosition.variables.system = nearestOrientationPoint !== null ? nearestOrientationPoint.name : 'Empty space';
         this.rendererPosition.variables.x = Math.floor(this.x);
         this.rendererPosition.variables.y = Math.floor(this.y);

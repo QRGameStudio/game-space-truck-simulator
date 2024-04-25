@@ -32,7 +32,7 @@ class GEOTrader extends GEOShip {
         this.__point_last_buy = null;
     }
 
-    step() {
+    async step() {
         super.step();
 
         if (this.__stay_timeout > 0) {
@@ -47,7 +47,7 @@ class GEOTrader extends GEOShip {
         }
 
         if (this.target === null) {
-            const stations = this.getNearests(GEOStation.t);
+            const stations = await this.getNearests(GEOStation.t);
             // noinspection JSValidateTypes
             this.target = weightedRandomChoice(stations.map((x, i) => ({item: x, weight: (i + 2) ** 2})), true);
         } else {

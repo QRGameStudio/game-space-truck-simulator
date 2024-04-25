@@ -108,15 +108,15 @@ class GEOStation extends GEOSavable {
      *
      * @param itemName {string}
      * @param stationPrices {{[stationId: number]: number}}
-     * @return {number}
+     * @return {Promise<number>}
      */
-    itemPrice(itemName, stationPrices = {}) {
+    async itemPrice(itemName, stationPrices = {}) {
         const item = ITEMS[itemName];
 
         let price = item.basePrice;
 
         if (item.mineable) {
-            let field = this.getNearests(GEOAsteroidField.t).find(x => x?.ore.name === itemName);
+            let field = (await this.getNearests(GEOAsteroidField.t)).find(x => x?.ore.name === itemName);
 
             if (field === undefined) {
                 price = (price + 1) ** 2;
@@ -127,7 +127,7 @@ class GEOStation extends GEOSavable {
 
         if (item.crafting) {
             for (const requiredItemName in item.crafting) {
-                price += this.itemPrice(requiredItemName) * item.crafting[requiredItemName];
+                price += await this.itemPrice(requiredItemName) * item.crafting[requiredItemName];
             }
         }
 
@@ -146,7 +146,7 @@ class GEOStation extends GEOSavable {
             // noinspection JSValidateTypes
             /** @type {GEOStation} */
             const station = obj;
-            otherModifier += station.itemPrice(itemName, stationPrices) * this.distanceFrom(station) / (8 * 500 * 1000);   // 500km ~ 1min of travel with basic ship
+            otherModifier += await station.itemPrice(itemName, stationPrices) * this.distanceFrom(station) / (8 * 500 * 1000);   // 500km ~ 1min of travel with basic ship
         }
 
         if (otherCount) {
@@ -159,14 +159,14 @@ class GEOStation extends GEOSavable {
     /**
      *
      * @param item {string}
-     * @return {number}
+     * @return {Promise<number>}
      */
-    buyingPrice(item) {
+    async buyingPrice(item) {
         if (this.inventory.full) {
             return 0;
         }
 
-        let price = this.itemPrice(item);
+        let price = await this.itemPrice(item);
         price *= 1 - (this.inventory.get(item) / this.inventory.size);
         price = Math.round(price * 100) / 100;
         return price;
@@ -175,14 +175,14 @@ class GEOStation extends GEOSavable {
     /**
      *
      * @param item {string}
-     * @return {number}
+     * @return {Promise<number>}
      */
-    sellingPrice(item) {
+    async sellingPrice(item) {
         if (this.inventory.get(item) === 0) {
             return 0;
         }
 
-        let price = this.buyingPrice(item) * 1.3;
+        let price = await this.buyingPrice(item) * 1.3;
         price = Math.round(price * 100) / 100;
         return price;
     }

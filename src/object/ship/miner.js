@@ -29,7 +29,7 @@ class GEOMiner extends GEOShip {
         this.__stay_timeout = 0;
     }
 
-    step() {
+    async step() {
         super.step();
 
         if (this.__stay_timeout > 0) {
@@ -53,12 +53,12 @@ class GEOMiner extends GEOShip {
 
         if (this.target === null) {
             if (this.inventory.full) {
-                this.target = this.getNearest(GEOStation.t);
+                this.target = await this.getNearest(GEOStation.t);
             } else {
-                this.target = this.getNearest(GEOAsteroid.t, this.maxTargetDistance) || null;
+                this.target = await this.getNearest(GEOAsteroid.t, this.maxTargetDistance) || null;
 
                 if (this.__autopilot === null && GEOAsteroidField.fields.length > 0) {
-                    const asteroidFields = this.getNearests(GEOAsteroidField.t);
+                    const asteroidFields = await this.getNearests(GEOAsteroidField.t);
                     const asteroidField = weightedRandomChoice(asteroidFields.map(x => ({item: x, weight: this.distanceFrom(x)})), true);
                     this.goto(asteroidField.x, asteroidField.y, 0);
                 }

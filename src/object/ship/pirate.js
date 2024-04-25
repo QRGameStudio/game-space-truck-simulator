@@ -33,7 +33,7 @@ class GEOPirate extends GEOShip {
         super.draw(ctx);
     }
 
-    step() {
+    async step() {
         super.step();
         if (this.target !== null && (this.target.isDead || this.distanceFrom(this.target) > this.maxTargetDistance)) {
             this.__autopilot = null;
@@ -41,14 +41,14 @@ class GEOPirate extends GEOShip {
         }
 
         if (this.target === null) {
-            this.target = this.getNearest(new Set([GEOPlayer.t, GEOMiner.t, GEOTrader.t]), this.maxTargetDistance) || null;
+            this.target = await this.getNearest(new Set([GEOPlayer.t, GEOMiner.t, GEOTrader.t]), this.maxTargetDistance) || null;
             if (this.target) {
                 // noinspection JSUnresolvedReference
                 console.debug('[STS] Target spotted', this.target?.t, this.target?.label?.text);
             }
 
             if (this.__autopilot === null && GEOAsteroidField.fields.length > 0) {
-                const asteroidFields = this.getNearests(GEOAsteroidField.t);
+                const asteroidFields = await this.getNearests(GEOAsteroidField.t);
                 const asteroidField = weightedRandomChoice(asteroidFields.map((x, i) => ({item: x, weight: asteroidFields.length - i + 1})));
                 this.goto(asteroidField.x, asteroidField.y, 300);
             }

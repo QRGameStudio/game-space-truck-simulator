@@ -170,7 +170,7 @@ async function loadGame() {
 function showInventory() {
     MODAL.show('inventory', {
         inventory: PLAYER.inventory
-    });
+    }).then();
 }
 
 
@@ -189,7 +189,7 @@ async function start() {
     GAME.cameraFollowObject = PLAYER;
     GAME.hearingDistance = GAME.r * 4;
     GAME.fullSimulationRange = GAME.r * 5;
-    GAME.fps = 240;
+    GAME.fps = 30;
 
     const initialGameSaved = await loadGame();
 
@@ -197,14 +197,15 @@ async function start() {
     const fields = 20;
     const stations = 7;
 
-    (() => {
+    await (async () => {
         const dustCount = 100;
-        GAME.onStep = () => {
+        GAME.onStep = async () => {
             if (GEODust.count < dustCount * Math.log2(Math.abs(PLAYER.s) + 1)) {
                 new GEODust(GAME);
             }
 
-            while (PLAYER.getNearests(GEOAsteroidField.t, radius).length < fields) {
+            let asteroidCount;
+            while ((asteroidCount = (await PLAYER.getNearests(GEOAsteroidField.t, radius)).length) < fields) {
                 console.log('[STS] Creating field');
                 new GEOAsteroidField(GAME, PLAYER.x + Math.random() * radius * 2 - radius, PLAYER.y + Math.random() * radius * 2 - radius);
             }
@@ -328,9 +329,9 @@ async function start() {
 
     const btnMap = $('#btnMap');
     new GRenderer(btnMap).render();  // render icon
-    btnMap.onclick = () => {
-        const fields = GAME
-            .getNearest(PLAYER, NAVIGABLE_TYPES)
+    btnMap.onclick = async () => {
+        const fields = (await GAME
+            .getNearest(PLAYER, NAVIGABLE_TYPES))
             .map((obj) => {
                 const distance = GAME.distanceBetween(PLAYER, obj); // meters
                 return {
@@ -352,7 +353,7 @@ async function start() {
 
         MODAL.show('targetSelection', {
             fields
-        }, functions)
+        }, functions).then();
     }
 
     setInterval(() => saveGame(), 10000);
