@@ -28,9 +28,10 @@ class GEOPlayer extends GEOShip {
     }
 
     die() {
-        const nearestBase = this.getNearest(GEOStation.t);
-        this.x = nearestBase.cx;
-        this.y = nearestBase.cy;
+        this.getNearest(GEOStation.t).then((nearestBase) => {
+            this.x = nearestBase.cx;
+            this.y = nearestBase.cy;
+        });
         this.s = 0;
         this.health = 100;
         this.inventory.clear();
@@ -57,7 +58,7 @@ class GEOPlayer extends GEOShip {
             this.cancelGoto();
         }
 
-        this.__playNearestPirateAlert();
+        await this.__playNearestPirateAlert();
         this.__playCargoFullAlert();
         this.__playDroneIdleAlert();
 
@@ -76,10 +77,10 @@ class GEOPlayer extends GEOShip {
         this.rendererPosition.variables.health = Math.ceil(this.health);
 
         if (this.__autopilot !== null) {
-            const nearestAutopilotSystem = this.game.getNearest(this.__autopilot, NAVIGABLE_TYPES, null, 1);
+            const nearestAutopilotSystem = await this.game.getNearest(this.__autopilot, NAVIGABLE_TYPES, null, 1);
 
             this.rendererPosition.variables.autopilot = {
-                time: Math.floor(this.distanceTo(this.__autopilot) / (this.s * this.game.fps)),
+                time: formatTime(Math.floor(this.distanceTo(this.__autopilot) / (this.s * this.game.fps))),
                 x: Math.floor(this.__autopilot.x),
                 y: Math.floor(this.__autopilot.y),
                 system: nearestAutopilotSystem[0]?.name || 'Unknown'
@@ -92,12 +93,12 @@ class GEOPlayer extends GEOShip {
         this.__renderDrone();
     }
 
-    __playNearestPirateAlert() {
+    async __playNearestPirateAlert() {
         /**
          *
          * @type {GEOPirate|undefined}
          */
-        const nearestPirate = this.getNearest('pirate');
+        const nearestPirate = await this.getNearest('pirate', 20000);
 
         if (nearestPirate === null) {
             this.__pirateAlertPlayed = false;
@@ -112,14 +113,14 @@ class GEOPlayer extends GEOShip {
             this.__pirateAlertPlayed = true;
             this.rendererAlert.variables.alert = this.__pirateAlertPlayed;
             this.rendererAlert.render();
-            MUSIC.play('alert');
+            MUSIC.play('alert').then();
         }
     }
 
     __playCargoFullAlert() {
         if (this.inventory.full && !this.__cargoFullAlertPlayed) {
             this.__cargoFullAlertPlayed = true;
-            MUSIC.play('cargoFull', 0, 30);
+            MUSIC.play('cargoFull', 0, 30).then();
         } else if (!this.inventory.full && this.__cargoFullAlertPlayed) {
             this.__cargoFullAlertPlayed = false;
         }
@@ -128,7 +129,7 @@ class GEOPlayer extends GEOShip {
     __playDroneIdleAlert() {
         if (this.drone.idle && !this.__droneIdleAlertPlayed) {
             this.__droneIdleAlertPlayed = true;
-            MUSIC.play('cargoFull', 0, 30);
+            MUSIC.play('cargoFull', 0, 30).then();
         } else if (!this.drone.idle && this.__droneIdleAlertPlayed) {
             this.__droneIdleAlertPlayed = false;
         }

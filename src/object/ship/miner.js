@@ -69,10 +69,14 @@ class GEOMiner extends GEOShip {
             if (targetDistance < this.wantedTargetDistance) {
                 if (this.target.t === GEOStation.t) {
                     this.cancelGoto();
+                    console.assert(this.target instanceof GEOStation, 'Target is not a station');
+                    // noinspection JSValidateTypes
+                    /** @type {GEOStation} */
+                    const targetStation = this.target;
                     this.inventory.keys().forEach((item) => {
                         const count = GEOStation.transferCargo(this, this.target, item, this.inventory.get(item));
-                        console.debug(`[STS] Miner deposited ${count} of ${item}`);
-                        (new GPopup(`${this.label.text} deposited ${count} of ${item}`)).show();
+                        console.debug(`[STS] Miner deposited ${count} of ${item} at ${targetStation.name}`);
+                        (new GPopup(`${this.label.text} deposited ${count} of ${item} at ${targetStation.name}`)).show();
                     });
                     this.__stay_timeout = (2 + Math.floor(15 * Math.random())) * this.game.fps;
                 } else if (this.drone.docked) {

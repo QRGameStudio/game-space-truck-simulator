@@ -32,7 +32,7 @@
                     <div>
                         <!-- ETA -->
                         <span r-var="GUt.ud('8J+VnQ==')"></span>
-                        <span r-var="v.autopilot.time"></span> s
+                        <span r-var="v.autopilot.time"></span>
                     </div>
                 </div>
 
@@ -99,7 +99,7 @@
                     <li r-for="field of v.fields">
                         <span class="map-btn" r-click="f.gotoObject(l.field)">
                             <span r-var="l.field.icon"></span>
-                            <span r-var="l.field.name"></span> (<span r-var="l.field.distance"></span>)
+                            <span r-var="l.field.name"></span> (<span r-var="l.field.distance"></span>, <span r-var="l.field.time"></span>)
                         </span>
                     </li>
                 </ul>

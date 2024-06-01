@@ -59,9 +59,9 @@ class GEOTrader extends GEOShip {
 
                 const to  = GEOStation.transferCargo(this, this.target);
                 const from = GEOStation.transferCargo(this.target, this);
-                console.debug(`[STS] Trader transferred cargo for ${salary} C`, to, from, this.inventory.size);
+                console.debug(`[STS] Trader transferred cargo to ${this.target.name} for ${salary} C`, to, from, this.inventory.size);
                 if (salary) {
-                    (new GPopup(`${this.label.text} transferred cargo for ${salary} C`)).show();
+                    (new GPopup(`${this.label.text} transferred cargo to ${this.target.name} for ${salary} C`)).show();
                 }
                 this.target = null;
                 this.__stay_timeout = (10 + Math.floor(30 * Math.random())) * this.game.fps;

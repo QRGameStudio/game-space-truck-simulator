@@ -70,12 +70,12 @@ class GEOStation extends GEOSavable {
              * @param item {string}
              * @param count {number | null}
              */
-            buy: (item, count) => {
+            buy: async (item, count) => {
                 if (count === null) {
                     count = Math.min(PLAYER.inventory.free, this.inventory.get(item));
                 }
 
-                const sellingPrice = this.sellingPrice(item);
+                const sellingPrice = await this.sellingPrice(item);
                 let price = sellingPrice * count;
                 if (price > SCORE.get()) {
                     return;
@@ -88,12 +88,12 @@ class GEOStation extends GEOSavable {
              * @param item {string}
              * @param count {number | null}
              */
-            sell: (item, count) => {
+            sell: async (item, count) => {
                 if (count === null) {
                     count = Math.min(this.inventory.free, PLAYER.inventory.get(item));
                 }
 
-                const price = this.buyingPrice(item);
+                const price = await this.buyingPrice(item);
                 count = GEOStation.transferCargo(PLAYER, this, item, count);
                 SCORE.inc(count * price).then();
                 this.__modal_renderer?.render();

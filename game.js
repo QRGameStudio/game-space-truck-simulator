@@ -32,6 +32,18 @@ const NAVIGABLE_TYPES = new Set([GEOStation.t, GEOAsteroidField.t]);
 /** @type {GEG} */
 let GAME;
 
+/**
+ * @param seconds {number} time in seconds
+ * @return {string} formatted time in HH:MM:SS
+ */
+function formatTime(seconds) {
+    let hours = Math.floor(seconds / 3600);
+    let minutes = Math.floor((seconds - hours * 3600) / 60);
+    let secs = seconds - hours * 3600 - minutes * 60;
+
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
 function initMusic() {
     MUSIC.cache['laser'] = [[["C8"],50],[["D7"],50]];
     MUSIC.cache['humm0'] =  [[["C1"],50],[["D1"],50]];
@@ -326,7 +338,6 @@ async function start() {
         GAME.canvas.focus();
     }
 
-
     const btnMap = $('#btnMap');
     new GRenderer(btnMap).render();  // render icon
     btnMap.onclick = async () => {
@@ -339,6 +350,7 @@ async function start() {
                     y: obj.y,
                     name: obj?.name,
                     distance: `${Math.round(distance) / 1000} km`,
+                    time: formatTime(Math.floor(distance / (PLAYER.maxSpeed * GAME.fps))),
                     icon: obj?.icon
                 }
             });
