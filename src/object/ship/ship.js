@@ -82,7 +82,7 @@ class GEOShip extends GEOSavable {
             const speedDownStepsLeft = this.s / this.speedAccelerationPerStep;
             const distanceLeft = this.distanceTo(this.__autopilot) - this.__autopilot.accuracy;
             const stepsLeft = distanceLeft / this.s;
-            const closingIn = this.s < 1 ? true : this.game.distanceBetween(this.__autopilot, this.nextPos) + 2 * this.s / 3 <= this.distanceTo(this.__autopilot);
+            const closingIn = this.s < 1 ? true : GEG.distanceBetween(this.__autopilot, this.nextPos) + 2 * this.s / 3 <= this.distanceTo(this.__autopilot);
 
             if (this.s > this.maxSpeed || !closingIn || stepsLeft < speedDownStepsLeft) {
                 this.decelerate(closingIn ? Math.max(this.__autopilot.slowTo, 3) : 0);

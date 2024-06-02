@@ -27,7 +27,7 @@ const MODAL = new GModal();
 const STORAGE = new GStorage("space-truck-simulator");
 
 
-const NAVIGABLE_TYPES = new Set([GEOStation.t, GEOAsteroidField.t, GEOPlayer.t]);
+const NAVIGABLE_TYPES = new Set([GEOStation.t, GEOAsteroidField.t]);
 
 /** @type {GEG} */
 let GAME;

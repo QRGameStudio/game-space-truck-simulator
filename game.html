@@ -100,7 +100,7 @@
                         <h3>System map</h3>
                         <div class="system-map-container">
                             <div class="system-map" r-attr="{&quot;style&quot;: &quot;'width: ' + v.map.max.x + 'px; height: ' + v.map.max.y + 'px;'&quot;}">
-                                <div class="system" r-for="field of v.fields" r-attr="{&quot;style&quot;: &quot;'left: ' + l.field.map.x + 'px; top: ' + l.field.map.y + 'px;'&quot;}" r-click="f.gotoObject(l.field)">
+                                <div class="system" r-for="field of v.fields.all" r-attr="{&quot;style&quot;: &quot;'left: ' + l.field.map.x + 'px; top: ' + l.field.map.y + 'px;'&quot;}" r-click="f.gotoObject(l.field)">
                                     <span class="system-icon" r-var="l.field.icon"></span>
                                     <span  r-if="!l.field.isPlayer" class="system-name" r-var="l.field.name"></span>
                                     <span r-if="!l.field.isPlayer" class="system-distance" r-var="l.field.distanceFloor"></span>
@@ -113,7 +113,7 @@
                     <div class="system-selection">
                         <h3>Navigation points</h3>
                         <ul class="system-navigation-points-list">
-                            <li r-for="field of v.fields" r-if="l.field.isNavigable">
+                            <li r-for="field of v.fields.navigable">
                                 <span class="map-btn" r-click="f.gotoObject(l.field)">
                                     <span r-var="l.field.icon"></span>
                                     <span r-var="l.field.name"></span> (<span r-var="l.field.distance"></span>, <span r-var="l.field.time"></span>)

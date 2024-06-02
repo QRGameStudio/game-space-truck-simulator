@@ -1,7 +1,7 @@
 class SystemMap {
     constructor() {
-        this.mapTypes = new Set([GEOPirate.t, GEOTrader.t, GEOMiner.t]);
-        NAVIGABLE_TYPES.forEach(x => this.mapTypes.add(x));
+        this.__ship_types = new Set([GEOPlayer.t, GEOPirate.t, GEOTrader.t, GEOMiner.t]);
+        this.__ship_radar_range = 2000000;
 
         const btnMap = $('#btnMap');
         new GRenderer(btnMap).render();  // render icon
@@ -84,8 +84,10 @@ class SystemMap {
     }
 
     async __getRendererData() {
-        const fields = (await GAME
-            .getNearest(PLAYER, NAVIGABLE_TYPES));
+        const fields = [
+            ...(await GAME.getNearest(PLAYER, NAVIGABLE_TYPES)),
+            ...GAME.getInRange(PLAYER, this.__ship_types, this.__ship_radar_range)
+        ];
         const minX = Math.min(...fields.map(x => x.x));
         const minY = Math.min(...fields.map(x => x.y));
         const maxX = Math.max(...fields.map(x => x.x));
@@ -93,7 +95,7 @@ class SystemMap {
         const mapPrecision = 10000;
 
         const mapFields = fields.map((obj) => {
-            const distance = GAME.distanceBetween(PLAYER, obj); // meters
+            const distance = GEG.distanceBetween(PLAYER, obj); // meters
             return {
                 x: obj.x,
                 y: obj.y,
@@ -112,7 +114,10 @@ class SystemMap {
         });
 
         return {
-            fields: mapFields,
+            fields: {
+                navigable: [...mapFields.filter(x => x.isNavigable)],
+                all: mapFields
+            },
             map: {
                 max: {
                     x: Math.floor((maxX - minX) / mapPrecision) + 200,
