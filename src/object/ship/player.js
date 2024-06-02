@@ -1,5 +1,6 @@
 class GEOPlayer extends GEOShip {
     static t = 'p';
+    static icon = GUt.ud('8J+agA==');
 
     constructor(game) {
         super(game, 'white');
@@ -7,6 +8,8 @@ class GEOPlayer extends GEOShip {
         this.y = 0;
         this.t = GEOPlayer.t;
         this.label.text = "";
+        this.name = "You";
+        this.icon = GEOPlayer.icon;
 
         this.drone = new GEODrone(this.game, this);
 

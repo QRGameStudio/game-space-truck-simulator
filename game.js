@@ -27,7 +27,7 @@ const MODAL = new GModal();
 const STORAGE = new GStorage("space-truck-simulator");
 
 
-const NAVIGABLE_TYPES = new Set([GEOStation.t, GEOAsteroidField.t]);
+const NAVIGABLE_TYPES = new Set([GEOStation.t, GEOAsteroidField.t, GEOPlayer.t]);
 
 /** @type {GEG} */
 let GAME;
@@ -342,18 +342,34 @@ async function start() {
     new GRenderer(btnMap).render();  // render icon
     btnMap.onclick = async () => {
         const fields = (await GAME
-            .getNearest(PLAYER, NAVIGABLE_TYPES))
-            .map((obj) => {
-                const distance = GAME.distanceBetween(PLAYER, obj); // meters
-                return {
-                    x: obj.x,
-                    y: obj.y,
-                    name: obj?.name,
-                    distance: `${Math.round(distance) / 1000} km`,
-                    time: formatTime(Math.floor(distance / (PLAYER.maxSpeed * GAME.fps))),
-                    icon: obj?.icon
-                }
-            });
+            .getNearest(PLAYER, NAVIGABLE_TYPES));
+        const minX = Math.min(...fields.map(x => x.x));
+        const minY = Math.min(...fields.map(x => x.y));
+        const maxX = Math.max(...fields.map(x => x.x));
+        const maxY = Math.max(...fields.map(x => x.y));
+        const mapPrecision = 10000;
+
+        const mapFields = fields.map((obj) => {
+            const distance = GAME.distanceBetween(PLAYER, obj); // meters
+            return {
+                x: obj.x,
+                y: obj.y,
+                map: {
+                    x: Math.floor((obj.x - minX) / mapPrecision) + 100,
+                    y: Math.floor((obj.y - minY) / mapPrecision) + 100,
+                    max: {
+                        x: Math.floor((maxX - minX) / mapPrecision) + 200,
+                        y: Math.floor((maxY - minY) / mapPrecision) + 200
+                    }
+                },
+                isPlayer: obj.t === PLAYER.t,
+                name: obj?.name,
+                distance: `${Math.round(distance) / 1000} km`,
+                distanceFloor: `${Math.floor(distance / 1000)} km`,
+                time: formatTime(Math.floor(distance / (PLAYER.maxSpeed * GAME.fps))),
+                icon: obj?.icon
+            }
+        });
 
         // noinspection JSUnusedGlobalSymbols
         const functions = {
@@ -364,8 +380,20 @@ async function start() {
         }
 
         MODAL.show('targetSelection', {
-            fields
+            fields: mapFields
         }, functions).then();
+        setTimeout(() => {
+            const mapContainer = $('.system-map-container');
+            const containerRect = mapContainer.getBoundingClientRect();
+            const fieldPlayer = mapFields.find(x => x.isPlayer);
+            const verticalOffset = fieldPlayer.map.y - containerRect.top + mapContainer.scrollTop;
+            const horizontalOffset = fieldPlayer.map.x - containerRect.left + mapContainer.scrollLeft;
+            const verticalScrollTo = verticalOffset - (mapContainer.clientHeight / 2);
+            const horizontalScrollTo = horizontalOffset - (mapContainer.clientWidth / 2);
+            mapContainer.scrollTop = verticalScrollTo;
+            mapContainer.scrollLeft = horizontalScrollTo;
+            console.log('Scrolling to', horizontalScrollTo, verticalScrollTo, fieldPlayer);
+        }, 100);
     }
 
     setInterval(() => saveGame(), 10000);
