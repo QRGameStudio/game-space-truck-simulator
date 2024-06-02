@@ -19,6 +19,8 @@ class GEOPirate extends GEOShip {
         this.maxTargetDistance = 20000;
         this.t = GEOPirate.t;
         this.label.text = "Pirate " + this.label.text;
+        this.name = this.label.text;
+        this.icon = GEOPlayer.icon;
 
         this.maxSpeed = 30;
         this.acceleration = 5;

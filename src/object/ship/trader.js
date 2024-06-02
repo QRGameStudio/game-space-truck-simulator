@@ -9,6 +9,8 @@ class GEOTrader extends GEOShip {
         super(game, 'cyan');
         this.t = GEOTrader.t;
         this.label.text = "Trader " + this.label.text;
+        this.name = this.label.text;
+        this.icon = GEOPlayer.icon;
 
         /**
          *

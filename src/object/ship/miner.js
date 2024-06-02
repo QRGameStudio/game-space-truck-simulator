@@ -8,7 +8,9 @@ class GEOMiner extends GEOShip {
     constructor(game) {
         super(game, 'green');
         this.t = GEOMiner.t;
-        this.label.text = "Trader " + this.label.text;
+        this.label.text = "Miner " + this.label.text;
+        this.name = this.label.text;
+        this.icon = GEOPlayer.icon;
 
         /**
          *
