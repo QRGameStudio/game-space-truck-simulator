@@ -134,7 +134,7 @@ body, #game-layer {
 
 .system-map-container {
     border: 1px solid orange;
-    width: 80vw;
+    width: 60vw;
     height: 80vh;
     overflow: scroll;
     background: black;
@@ -154,9 +154,19 @@ body, #game-layer {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    width: 70px;
+}
+
+.system-name.system-player {
+    color: lightgreen;
 }
 
 .system > .system-time, .system > .system-distance {
     font-size: 14px;
     color: lightgray;
+}
+
+.system-navigation-points-list {
+    max-height: 80vh;
+    overflow: scroll;
 }
