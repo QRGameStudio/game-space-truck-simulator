@@ -279,6 +279,11 @@ async function start() {
                 trader.x = PLAYER.x;
                 trader.y = PLAYER.y;
                 break;
+            case "k":
+                const pirate = new GEOPirate(GAME);
+                pirate.x = PLAYER.x + GAME.r;
+                pirate.y = PLAYER.y + GAME.r;
+                break;
             case "f":
                 new GEOAsteroidField(GAME, PLAYER.x, PLAYER.y);
                 break;
