@@ -16,8 +16,7 @@ autobuild:
 		node ../util-games-builder/run-from-source.js game.html
 
 autobuild-local:
-		./../web-qrpr.eu/scripts/run.py 5000 &
-		node ../util-games-builder/run-from-source.js --web=http://localhost:5000 game.html
+		node ../util-games-builder/run-from-source.js  --web-libs=../web-libs/ --web-path=../web-qrpr.eu/ game.html
 
 .PHONY: clean compile run debug
 .SILENT:

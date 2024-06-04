@@ -3,4 +3,4 @@ function gameEntryPoint() {
     // !G.import('game.js')
 }
 
-window.onload = gameEntryPoint;
+window.addEventListener('load', gameEntryPoint);
