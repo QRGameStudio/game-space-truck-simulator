@@ -89,6 +89,7 @@ class GEOStation extends GEOSavable {
                     trader.x = this.x;
                     trader.y = this.y;
                     trader.owned = true;
+                    PLAYER.inventory.add(item, -count);
                 }
             },
             /**

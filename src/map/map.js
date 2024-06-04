@@ -23,10 +23,12 @@ class SystemMap {
 
             this.__scrollToPlayer();
             this.__resolveSystemOverlaps();
+            this.__connectLines()
             intervalRender = setInterval(async () => {
                 rendered.variables = await this.__getRendererData();
                 rendered.render();
                 this.__resolveSystemOverlaps();
+                this.__connectLines();
             }, 2000);
 
             modalClose.then(() => clearInterval(intervalRender));
@@ -67,7 +69,7 @@ class SystemMap {
             element.style.left = `${currentLeft + referenceRect.width + 10}px`; // Move right by the width of referenceElement + some margin
         }
 
-        const children = document.querySelectorAll('.system-map > .system');
+        const children = document.querySelectorAll('.system-map > .system-label');
         let moved;
 
         do {
@@ -83,11 +85,51 @@ class SystemMap {
         } while (moved);
     }
 
+    __connectLines() {
+        const mapContainer = $('.system-map-container');
+        const containerPos = mapContainer.getBoundingClientRect();
+
+        document.querySelectorAll('.system-map > .system-line').forEach((line) => {
+            const objectId = line.id.split('-')[2];
+            if (!objectId) {
+                return;
+            }
+            const elIcon = document.getElementById(`system-icon-${objectId}`);
+            const elDot = document.getElementById(`system-dot-${objectId}`);
+
+            const pos1 = elIcon.getBoundingClientRect();
+            const pos2 = elDot.getBoundingClientRect();
+
+            const x1 = pos1.left + pos1.width / 2 - containerPos.left + mapContainer.scrollLeft;
+            const y1 = pos1.top + pos1.height / 2 - containerPos.top + mapContainer.scrollTop;
+            const x2 = pos2.left + pos2.width / 2 - containerPos.left + mapContainer.scrollLeft;
+            const y2 = pos2.top + pos2.height / 2 - containerPos.top + mapContainer.scrollTop;
+
+            const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+            const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+
+            line.style.width = length + 'px';
+            line.style.transform = `rotate(${angle}deg)`;
+            line.style.top = y1 + 'px';
+            line.style.left = x1 + 'px';
+        });
+    }
+
     async __getRendererData() {
+        const radarSources = [
+            PLAYER, ...[...GAME.objectsOfTypes(new Set([GEOTrader.t]))].filter(x => x?.owned)
+        ];
+
         const fields = [
             ...(await GAME.getNearest(PLAYER, NAVIGABLE_TYPES)),
-            ...GAME.getInRange(PLAYER, this.__ship_types, this.__ship_radar_range)
-        ];
+            ...radarSources.map((x) => [...GAME.getInRange(x, this.__ship_types, this.__ship_radar_range)]).flat(),
+            ...radarSources
+        ].filter((field, index, self) =>
+                index === self.findIndex((t) => (
+                    t.id === field.id
+                ))
+        );
+
         const minX = Math.min(...fields.map(x => x.x));
         const minY = Math.min(...fields.map(x => x.y));
         const maxX = Math.max(...fields.map(x => x.x));
@@ -99,6 +141,7 @@ class SystemMap {
             return {
                 x: obj.x,
                 y: obj.y,
+                id: obj.id,
                 map: {
                     x: Math.floor((obj.x - minX) / mapPrecision) + 100,
                     y: Math.floor((obj.y - minY) / mapPrecision) + 100,

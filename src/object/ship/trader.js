@@ -2,6 +2,10 @@ class GEOTrader extends GEOShip {
     static t = 'trader';
 
     /**
+     * @typedef {{command: string, description: string, data: any}} GEOTraderOrder
+     */
+
+    /**
      *
      * @param game {GEG}
      */
@@ -12,6 +16,9 @@ class GEOTrader extends GEOShip {
         this.name = this.label.text;
         this.icon = GEOPlayer.icon;
         this.__owned = false;
+
+        /** @type {GEOTraderOrder[]} */
+        this.__orders = [];
 
         /**
          *
@@ -59,6 +66,14 @@ class GEOTrader extends GEOShip {
         }
 
         if (this.target === null) {
+            if (this.__orders) {
+                const gotoOrder = this.__orders.find(x => x.command === "goto");
+                if (gotoOrder) {
+                    this.target = gotoOrder.data;
+                    this.__orders.splice(this.__orders.indexOf(gotoOrder), 1);
+                }
+            }
+
             const stations = await this.getNearests(GEOStation.t);
             // noinspection JSValidateTypes
             this.target = weightedRandomChoice(stations.map((x, i) => ({item: x, weight: (i + 2) ** 2})), true);
@@ -72,8 +87,17 @@ class GEOTrader extends GEOShip {
                     }
                 }
 
-                const to  = GEOStation.transferCargo(this, this.target);
-                const from = GEOStation.transferCargo(this.target, this);
+                const cargoTypeSell = this.__orders.find(x => x.command === "sell")?.data || null;
+                const cargoTypeBuy = this.__orders.find(x => x.command === "buy")?.data || null;
+
+                let from = 0;
+                let to = 0;
+                if (!cargoTypeBuy || cargoTypeSell) {
+                    to  = GEOStation.transferCargo(this, this.target, cargoTypeSell);
+                }
+                if (!cargoTypeSell || cargoTypeBuy) {
+                    from = GEOStation.transferCargo(this.target, this, cargoTypeBuy);
+                }
                 console.debug(`[STS] Trader transferred cargo to ${this.target.name} for ${salary} C`, to, from, this.inventory.size);
                 if (salary && this.owned) {
                     (new GPopup(`${this.label.text} transferred cargo to ${this.target.name} for ${salary} C`)).show();

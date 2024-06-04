@@ -157,6 +157,20 @@ body, #game-layer {
     width: 70px;
 }
 
+.system-dot {
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 50%;
+    opacity: 0.2;
+}
+
+.system-line {
+    position: absolute;
+    height: 2px;
+    transform-origin: 0 0;
+    opacity: 0.2;
+}
+
 .system-name.system-player {
     color: lightgreen;
 }
