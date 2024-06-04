@@ -11,6 +11,7 @@ class GEOTrader extends GEOShip {
         this.label.text = "Trader " + this.label.text;
         this.name = this.label.text;
         this.icon = GEOPlayer.icon;
+        this.__owned = false;
 
         /**
          *
@@ -32,6 +33,15 @@ class GEOTrader extends GEOShip {
          * @private
          */
         this.__point_last_buy = null;
+    }
+
+    get owned() {
+        return this.__owned;
+    }
+
+    set owned(value) {
+        this.__owned = value;
+        this.label.color = value ? "green" : "white";
     }
 
     async step() {
@@ -57,13 +67,17 @@ class GEOTrader extends GEOShip {
                 let salary = 0;
                 if (this.__point_last_buy) {
                     salary = Math.round(Math.max(0, Math.log10(this.distanceTo(this.__point_last_buy)) ** 2));
+                    if (salary === Infinity) {
+                        salary = 0;
+                    }
                 }
 
                 const to  = GEOStation.transferCargo(this, this.target);
                 const from = GEOStation.transferCargo(this.target, this);
                 console.debug(`[STS] Trader transferred cargo to ${this.target.name} for ${salary} C`, to, from, this.inventory.size);
-                if (salary) {
+                if (salary && this.owned) {
                     (new GPopup(`${this.label.text} transferred cargo to ${this.target.name} for ${salary} C`)).show();
+                    SCORE.inc(salary).then();
                 }
                 this.target = null;
                 this.__stay_timeout = (10 + Math.floor(30 * Math.random())) * this.game.fps;
@@ -73,12 +87,13 @@ class GEOTrader extends GEOShip {
     }
 
     saveDict() {
-        return {...super.saveDict(), stayTimeout: this.__stay_timeout, pointLastBuy: this.__point_last_buy};
+        return {...super.saveDict(), stayTimeout: this.__stay_timeout, pointLastBuy: this.__point_last_buy, owner: this.owned ? "PLAYER" : null};
     }
 
     loadDict(data) {
         this.__stay_timeout = data.stayTimeout;
         this.__point_last_buy = data.pointLastBuy;
+        this.owned = data?.owner === "PLAYER";
         super.loadDict(data);
     }
 }

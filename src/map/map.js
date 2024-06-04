@@ -105,11 +105,12 @@ class SystemMap {
                 },
                 isNavigable: NAVIGABLE_TYPES.has(obj.t),
                 isPlayer: obj.t === PLAYER.t,
-                name: obj?.name,
+                name: obj?.label?.text,
                 distance: `${Math.round(distance) / 1000} km`,
                 distanceFloor: `${Math.floor(distance / 1000)} km`,
                 time: formatTime(Math.floor(distance / (PLAYER.maxSpeed * GAME.fps))),
-                icon: obj?.icon
+                icon: obj?.icon,
+                color: obj?.label?.color
             }
         });
 

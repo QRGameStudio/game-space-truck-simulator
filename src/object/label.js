@@ -9,6 +9,7 @@ class GEOLabel extends GEO {
         super(game);
         this.text = text;
         this.owner = owner;
+        this.color = "white";
     }
 
     step() {
@@ -26,7 +27,7 @@ class GEOLabel extends GEO {
             return;
         }
 
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = this.color;
         ctx.font = "24px sans";
         const measure = ctx.measureText(this.text);
         ctx.fillText(this.text, this.x - measure.width / 2, this.y + this.h + 15);

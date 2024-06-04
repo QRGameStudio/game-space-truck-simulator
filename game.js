@@ -1,4 +1,4 @@
-// !G.import('assets/private/audio_mp3.js')
+// !G_.import('assets/private/audio_mp3.js')
 // !G.import('assets/public/audio.js')
 
 const { random, sin, cos, PI } = Math;
@@ -250,6 +250,7 @@ async function start() {
                 const trader = new GEOTrader(GAME);
                 trader.x = PLAYER.x;
                 trader.y = PLAYER.y;
+                trader.owned = true;
                 break;
             case "k":
                 const pirate = new GEOPirate(GAME);

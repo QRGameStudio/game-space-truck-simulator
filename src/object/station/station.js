@@ -83,6 +83,13 @@ class GEOStation extends GEOSavable {
                 count = GEOStation.transferCargo(this, PLAYER, item, count);
                 SCORE.inc(-1 * count * sellingPrice).then();
                 this.__modal_renderer?.render();
+
+                if (item === 'trader ship') {
+                    const trader = new GEOTrader(this.game);
+                    trader.x = this.x;
+                    trader.y = this.y;
+                    trader.owned = true;
+                }
             },
             /**
              * @param item {string}
@@ -221,7 +228,7 @@ class GEOStation extends GEOSavable {
     }
 
     draw(ctx) {
-        ctx.strokeStyle = 'white';
+        ctx.strokeStyle = 'gray';
         ctx.lineWidth = 7;
         ctx.strokeRect(this.x - this.wh, this.y - this.hh, this.w, this.h);
     }
