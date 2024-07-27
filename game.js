@@ -239,6 +239,8 @@ async function start() {
         PLAYER.y = randomStation.y;
     }
 
+    // [...GAME.objectsOfTypes(new Set([GEOTrader.t]))].find(x => x?.owned)?.openCommands().then();
+
     GAME.onKeyDown = (key) => {
         switch (key) {
             case "m":
