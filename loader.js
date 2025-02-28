@@ -4,3 +4,6 @@ function gameEntryPoint() {
 }
 
 window.addEventListener('load', gameEntryPoint);
+if (window.qrgames.env) {
+    window.qrgames.onload = gameEntryPoint;
+}
