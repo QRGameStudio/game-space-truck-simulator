@@ -3,7 +3,4 @@ function gameEntryPoint() {
     // !G.import('game.js')
 }
 
-window.addEventListener('load', gameEntryPoint);
-if (window.qrgames.env) {
-    window.qrgames.onload = gameEntryPoint;
-}
+window.qrgames.onload = gameEntryPoint;
